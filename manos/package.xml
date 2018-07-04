@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>manos</name>
+  <version>0.0.0</version>
+  <description>The manos meta-package</description>
+
+  <maintainer email="gstavrinos@iit.demokritos.gr">George Stavrinos</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+	<metapackage/>
+  </export>
+</package>
