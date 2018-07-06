@@ -37,7 +37,7 @@
  </joint>
 
 <!--astra  -->
- <xacro:include filename="$(find ur_description)/urdf/sensors/kinect.urdf.xacro"/>
+<xacro:include filename="$(find manos_description)/urdf/sensors/kinect.urdf.xacro"/>
 <!--attach the kinect to the robot -->
  <xacro:sensor_kinect  parent="base_link"/>
 

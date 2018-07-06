@@ -9,9 +9,9 @@
   <license>TODO</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <depends>ur_description</depends>
-  <depends>openni_camera</depends>
-  <depends>schunk_grippers</depends>
+  <depend>ur_description</depend>
+  <depend>openni_description</depend>
+  <depend>schunk_pg70</depend>
 
   <export>
   </export>
