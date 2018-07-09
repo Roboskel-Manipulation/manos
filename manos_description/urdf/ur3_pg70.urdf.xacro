@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"
   name="ur3_pg70">
 <!-- schunk_pg70 -->
-  <xacro:include filename="$(find schunk_pg70)/urdf/pg70.urdf.xacro"/>
+  <xacro:include filename="$(find manos_description)/urdf/grippers/schunk_pg70.urdf.xacro"/>
 <!-- ur3 -->
   <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" />
   
@@ -123,14 +123,14 @@
     <origin xyz="0.004 -0.08 0.03" rpy="0.0 0.0 ${pi/2}" />
  </joint>
 
- <joint name="ar_marker_joint" type="fixed">
+ <!--<joint name="ar_marker_joint" type="fixed">
     <parent link="base_link"/>
     <child link="ar_marker_link"/>
     <origin xyz="-0.41 0.41 0.00" rpy="0.0 0.0 0.0" />
  </joint>
 
  <link name="ar_marker_link">
-  </link>
+  </link>-->
 
 
   <gazebo>
