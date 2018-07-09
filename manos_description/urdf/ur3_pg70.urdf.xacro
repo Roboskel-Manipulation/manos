@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+  name="ur3_pg70">
+<!-- schunk_pg70 -->
+  <xacro:include filename="$(find manos_description)/urdf/grippers/schunk_pg70.urdf.xacro"/>
+<!-- ur3 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" />
+  
+  <xacro:ur3_robot prefix="" joint_limited="false"/>
+
+   <link name="world" />
+
+  <link name="box_link">
+    <visual>
+      <geometry>
+        <box size="1.0 1.0 0.86"/>
+      </geometry>
+    </visual>
+    <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="100"/>
+        <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+    </inertial>
+    <collision>
+      <geometry>
+        <box size="1.0 1.0 0.86"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "box_link" />
+    <origin xyz="0.0 0.0 0.43" rpy="0.0 0.0 0.0" />
+  </joint>
+
+   <joint name="box_joint" type="fixed">
+    <parent link="box_link"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
+ </joint>
+
+  <link name="gripper_link">
+    <visual>
+      <geometry>
+        <box size="0.08 0.113 0.005"/>
+      </geometry>
+      <material name="o">
+        <color rgba="0.549019608 0.450980392 0.235294118 1" />
+      </material>
+    </visual>
+    <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.001"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+    </inertial>
+    <collision>
+      <geometry>
+        <box size="0.08 0.113 0.005"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="gripper_joint" type="fixed">
+    <parent link="ee_link"/>
+    <child link="gripper_link"/>
+    <origin xyz="0.0 0.0 0.0" rpy="${pi} -${pi/2} 0.0" />
+ </joint>
+
+  <!-- GRIPPER -->
+  <xacro:schunk_pg70 name="schunk_pg70" parent="gripper_link">
+    <origin xyz="0 0.0 0.0091" rpy="0 0 0" /> <!--slightly above gazebo plane-->
+  </xacro:schunk_pg70>
+
+ <link name="gripper_power_cable">
+    <visual>
+      <geometry>
+        <cylinder length="0.035" radius="0.012"/>
+      </geometry>
+      <material name="o">
+         <color rgba="0.549019608 0.450980392 0.235294118 1" />
+      </material>
+    </visual>
+    <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.01"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+    </inertial>
+    <collision>
+      <geometry>
+        <cylinder length="0.035" radius="0.012"/>
+      </geometry>
+    </collision>
+ </link>
+
+ <joint name="gripper_power_cable_joint" type="fixed">
+    <parent link="gripper_power_box"/>
+    <child link="gripper_power_cable"/>
+    <origin xyz="-0.01 -0.042 -0.011" rpy="${pi/2} 0.0 0.0" />
+ </joint>
+
+  <link name="gripper_power_box">
+    <visual>
+      <geometry>
+        <box size="0.047 0.072 0.072"/>
+         <material
+        name="">
+        <color
+          rgba="0.549019608 0.450980392 0.235294118 1" />
+      </material>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+       <box size="0.047 0.072 0.072"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="gripper_power_joint" type="fixed">
+    <parent link="schunk_pg70_base_link"/>
+    <child link="gripper_power_box"/>
+    <origin xyz="0.004 -0.08 0.03" rpy="0.0 0.0 ${pi/2}" />
+ </joint>
+
+ <!--<joint name="ar_marker_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="ar_marker_link"/>
+    <origin xyz="-0.41 0.41 0.00" rpy="0.0 0.0 0.0" />
+ </joint>
+
+ <link name="ar_marker_link">
+  </link>-->
+
+
+  <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <!--<robotNamespace>ur3_pg70</robotNamespace>-->
+         <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      </plugin>
+  </gazebo>
+
+</robot>
+

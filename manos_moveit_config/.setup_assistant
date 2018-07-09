@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: manos_description
+    relative_path: urdf/ur3_pg70.urdf.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/manos.srdf
+  CONFIG:
+    author_name: George Stavrinos
+    author_email: gstavrinos@iit.demokritos.gr
+    generated_timestamp: 1531138625
