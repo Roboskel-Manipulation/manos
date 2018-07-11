@@ -1,13 +1,13 @@
 gripper_controller:
   type: position_controllers/JointTrajectoryController
   joints:
-     - pg70_finger_left_joint
-     - pg70_finger_right_joint
+     - pg70_finger1_joint
+     - pg70_finger2_joint
   constraints:
       goal_time: 0.6
       stopped_velocity_tolerance: 0.005
-      pg70_finger_left_joint: {trajectory: 0.01, goal: 0.005}
-      pg70_finger_right_joint: {trajectory: 0.01, goal: 0.005}
+      pg70_finger1_joint: {trajectory: 0.01, goal: 0.005}
+      pg70_finger2_joint: {trajectory: 0.01, goal: 0.005}
   stop_trajectory_duration: 0.5
   state_publish_rate:  25
 action_monitor_rate: 10

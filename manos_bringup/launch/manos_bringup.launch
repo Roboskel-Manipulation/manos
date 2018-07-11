@@ -23,9 +23,8 @@
     <arg name="prefix" value="$(arg prefix)" />
   </include>
 
-  <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find manos_description)/urdf/ur3_pg70.urdf.xacro'" />
-  <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find manos_description)/urdf/ur3_pg70.urdf.xacro'" />
+  <include file="$(find schunk_pg70)/launch/pg70_rs232_control.launch"/>
 
-    <rosparam file="$(find manos_bringup)/config/schunk_pg70.yaml" command="load"/>
-    <node name="gripper_controller_spawner" pkg="controller_manager" type="spawner" args="gripper_controller --shutdown-timeout 0.5"/>
+    <!--<rosparam file="$(find manos_bringup)/config/schunk_pg70.yaml" command="load"/>
+    <node name="gripper_controller_spawner" pkg="controller_manager" type="spawner" args="gripper_controller"/>-->
 </launch>
