@@ -15,6 +15,9 @@
 
   <!-- Load the robot specific controller manager; this sets the moveit_controller_manager ROS parameter -->
   <arg name="moveit_controller_manager" default="manos" />
-  <include file="$(find manos_moveit_config)/launch/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml" />
+  <arg name="simulation" default="false"/>
+  <include file="$(find manos_moveit_config)/launch/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml" >
+    <arg name="simulation" value="$(arg simulation)"/>
+  </include>
 
 </launch>

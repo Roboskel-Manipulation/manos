@@ -21,13 +21,13 @@
     <group name="gripper">
         <link name="ee_link" />
         <link name="gripper_link" />
-        <link name="schunk_pg70_base_link" />
+        <link name="pg70_base_link" />
         <link name="gripper_power_box" />
         <link name="gripper_power_cable" />
-        <link name="schunk_pg70_finger_left_link" />
-        <link name="schunk_pg70_fingertip_left_link" />
-        <link name="schunk_pg70_finger_right_link" />
-        <link name="schunk_pg70_fingertip_right_link" />
+        <link name="pg70_finger1_link" />
+        <link name="pg70_fingertip_left_link" />
+        <link name="pg70_finger2_link" />
+        <link name="pg70_fingertip_right_link" />
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="up" group="arm">
@@ -49,11 +49,11 @@
     <disable_collisions link1="ee_link" link2="gripper_link" reason="Adjacent" />
     <disable_collisions link1="ee_link" link2="gripper_power_box" reason="Never" />
     <disable_collisions link1="ee_link" link2="gripper_power_cable" reason="Never" />
-    <disable_collisions link1="ee_link" link2="schunk_pg70_base_link" reason="Never" />
-    <disable_collisions link1="ee_link" link2="schunk_pg70_finger_left_link" reason="Never" />
-    <disable_collisions link1="ee_link" link2="schunk_pg70_finger_right_link" reason="Never" />
-    <disable_collisions link1="ee_link" link2="schunk_pg70_fingertip_left_link" reason="Never" />
-    <disable_collisions link1="ee_link" link2="schunk_pg70_fingertip_right_link" reason="Never" />
+    <disable_collisions link1="ee_link" link2="pg70_base_link" reason="Never" />
+    <disable_collisions link1="ee_link" link2="pg70_finger1_link" reason="Never" />
+    <disable_collisions link1="ee_link" link2="pg70_finger2_link" reason="Never" />
+    <disable_collisions link1="ee_link" link2="pg70_fingertip_left_link" reason="Never" />
+    <disable_collisions link1="ee_link" link2="pg70_fingertip_right_link" reason="Never" />
     <disable_collisions link1="ee_link" link2="wrist_1_link" reason="Never" />
     <disable_collisions link1="ee_link" link2="wrist_2_link" reason="Never" />
     <disable_collisions link1="ee_link" link2="wrist_3_link" reason="Adjacent" />
@@ -62,56 +62,56 @@
     <disable_collisions link1="forearm_link" link2="wrist_2_link" reason="Never" />
     <disable_collisions link1="gripper_link" link2="gripper_power_box" reason="Never" />
     <disable_collisions link1="gripper_link" link2="gripper_power_cable" reason="Never" />
-    <disable_collisions link1="gripper_link" link2="schunk_pg70_base_link" reason="Adjacent" />
-    <disable_collisions link1="gripper_link" link2="schunk_pg70_finger_left_link" reason="Never" />
-    <disable_collisions link1="gripper_link" link2="schunk_pg70_finger_right_link" reason="Never" />
-    <disable_collisions link1="gripper_link" link2="schunk_pg70_fingertip_left_link" reason="Never" />
-    <disable_collisions link1="gripper_link" link2="schunk_pg70_fingertip_right_link" reason="Never" />
+    <disable_collisions link1="gripper_link" link2="pg70_base_link" reason="Adjacent" />
+    <disable_collisions link1="gripper_link" link2="pg70_finger1_link" reason="Never" />
+    <disable_collisions link1="gripper_link" link2="pg70_finger2_link" reason="Never" />
+    <disable_collisions link1="gripper_link" link2="pg70_fingertip_left_link" reason="Never" />
+    <disable_collisions link1="gripper_link" link2="pg70_fingertip_right_link" reason="Never" />
     <disable_collisions link1="gripper_link" link2="wrist_1_link" reason="Never" />
     <disable_collisions link1="gripper_link" link2="wrist_2_link" reason="Never" />
     <disable_collisions link1="gripper_link" link2="wrist_3_link" reason="Default" />
     <disable_collisions link1="gripper_power_box" link2="gripper_power_cable" reason="Adjacent" />
-    <disable_collisions link1="gripper_power_box" link2="schunk_pg70_base_link" reason="Adjacent" />
-    <disable_collisions link1="gripper_power_box" link2="schunk_pg70_finger_left_link" reason="Never" />
-    <disable_collisions link1="gripper_power_box" link2="schunk_pg70_finger_right_link" reason="Never" />
-    <disable_collisions link1="gripper_power_box" link2="schunk_pg70_fingertip_left_link" reason="Never" />
-    <disable_collisions link1="gripper_power_box" link2="schunk_pg70_fingertip_right_link" reason="Never" />
-    <disable_collisions link1="gripper_power_box" link2="wrist_1_link" reason="Never" />
-    <disable_collisions link1="gripper_power_box" link2="wrist_2_link" reason="Never" />
+    <disable_collisions link1="gripper_power_box" link2="pg70_base_link" reason="Adjacent" />
+    <disable_collisions link1="gripper_power_box" link2="pg70_finger1_link" reason="Never" />
+    <disable_collisions link1="gripper_power_box" link2="pg70_finger2_link" reason="Never" />
+    <disable_collisions link1="gripper_power_box" link2="pg70_fingertip_left_link" reason="Never" />
+    <disable_collisions link1="gripper_power_box" link2="pg70_fingertip_right_link" reason="Never" />
+    <!-- <disable_collisions link1="gripper_power_box" link2="wrist_1_link" reason="Never" />
+    <disable_collisions link1="gripper_power_box" link2="wrist_2_link" reason="Never" /> -->
     <disable_collisions link1="gripper_power_box" link2="wrist_3_link" reason="Never" />
-    <disable_collisions link1="gripper_power_cable" link2="schunk_pg70_base_link" reason="Never" />
-    <disable_collisions link1="gripper_power_cable" link2="schunk_pg70_finger_left_link" reason="Never" />
-    <disable_collisions link1="gripper_power_cable" link2="schunk_pg70_finger_right_link" reason="Never" />
-    <disable_collisions link1="gripper_power_cable" link2="schunk_pg70_fingertip_left_link" reason="Never" />
-    <disable_collisions link1="gripper_power_cable" link2="schunk_pg70_fingertip_right_link" reason="Never" />
+    <disable_collisions link1="gripper_power_cable" link2="pg70_base_link" reason="Never" />
+    <disable_collisions link1="gripper_power_cable" link2="pg70_finger1_link" reason="Never" />
+    <disable_collisions link1="gripper_power_cable" link2="pg70_finger2_link" reason="Never" />
+    <disable_collisions link1="gripper_power_cable" link2="pg70_fingertip_left_link" reason="Never" />
+    <disable_collisions link1="gripper_power_cable" link2="pg70_fingertip_right_link" reason="Never" />
     <disable_collisions link1="gripper_power_cable" link2="wrist_1_link" reason="Never" />
     <disable_collisions link1="gripper_power_cable" link2="wrist_2_link" reason="Never" />
     <disable_collisions link1="gripper_power_cable" link2="wrist_3_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_base_link" link2="schunk_pg70_finger_left_link" reason="Adjacent" />
-    <disable_collisions link1="schunk_pg70_base_link" link2="schunk_pg70_finger_right_link" reason="Adjacent" />
-    <disable_collisions link1="schunk_pg70_base_link" link2="schunk_pg70_fingertip_left_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_base_link" link2="schunk_pg70_fingertip_right_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_base_link" link2="wrist_1_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_base_link" link2="wrist_2_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_base_link" link2="wrist_3_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_finger_left_link" link2="schunk_pg70_finger_right_link" reason="Default" />
-    <disable_collisions link1="schunk_pg70_finger_left_link" link2="schunk_pg70_fingertip_left_link" reason="Adjacent" />
-    <disable_collisions link1="schunk_pg70_finger_left_link" link2="schunk_pg70_fingertip_right_link" reason="Default" />
-    <disable_collisions link1="schunk_pg70_finger_left_link" link2="wrist_1_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_finger_left_link" link2="wrist_2_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_finger_left_link" link2="wrist_3_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_finger_right_link" link2="schunk_pg70_fingertip_left_link" reason="Default" />
-    <disable_collisions link1="schunk_pg70_finger_right_link" link2="schunk_pg70_fingertip_right_link" reason="Adjacent" />
-    <disable_collisions link1="schunk_pg70_finger_right_link" link2="wrist_1_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_finger_right_link" link2="wrist_2_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_finger_right_link" link2="wrist_3_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_fingertip_left_link" link2="schunk_pg70_fingertip_right_link" reason="Default" />
-    <disable_collisions link1="schunk_pg70_fingertip_left_link" link2="wrist_1_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_fingertip_left_link" link2="wrist_2_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_fingertip_left_link" link2="wrist_3_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_fingertip_right_link" link2="wrist_1_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_fingertip_right_link" link2="wrist_2_link" reason="Never" />
-    <disable_collisions link1="schunk_pg70_fingertip_right_link" link2="wrist_3_link" reason="Never" />
+    <disable_collisions link1="pg70_base_link" link2="pg70_finger1_link" reason="Adjacent" />
+    <disable_collisions link1="pg70_base_link" link2="pg70_finger2_link" reason="Adjacent" />
+    <disable_collisions link1="pg70_base_link" link2="pg70_fingertip_left_link" reason="Never" />
+    <disable_collisions link1="pg70_base_link" link2="pg70_fingertip_right_link" reason="Never" />
+    <disable_collisions link1="pg70_base_link" link2="wrist_1_link" reason="Never" />
+    <disable_collisions link1="pg70_base_link" link2="wrist_2_link" reason="Never" />
+    <disable_collisions link1="pg70_base_link" link2="wrist_3_link" reason="Never" />
+    <disable_collisions link1="pg70_finger1_link" link2="pg70_finger2_link" reason="Default" />
+    <disable_collisions link1="pg70_finger1_link" link2="pg70_fingertip_left_link" reason="Adjacent" />
+    <disable_collisions link1="pg70_finger1_link" link2="pg70_fingertip_right_link" reason="Default" />
+    <disable_collisions link1="pg70_finger1_link" link2="wrist_1_link" reason="Never" />
+    <disable_collisions link1="pg70_finger1_link" link2="wrist_2_link" reason="Never" />
+    <disable_collisions link1="pg70_finger1_link" link2="wrist_3_link" reason="Never" />
+    <disable_collisions link1="pg70_finger2_link" link2="pg70_fingertip_left_link" reason="Default" />
+    <disable_collisions link1="pg70_finger2_link" link2="pg70_fingertip_right_link" reason="Adjacent" />
+    <disable_collisions link1="pg70_finger2_link" link2="wrist_1_link" reason="Never" />
+    <disable_collisions link1="pg70_finger2_link" link2="wrist_2_link" reason="Never" />
+    <disable_collisions link1="pg70_finger2_link" link2="wrist_3_link" reason="Never" />
+    <disable_collisions link1="pg70_fingertip_left_link" link2="pg70_fingertip_right_link" reason="Default" />
+    <disable_collisions link1="pg70_fingertip_left_link" link2="wrist_1_link" reason="Never" />
+    <disable_collisions link1="pg70_fingertip_left_link" link2="wrist_2_link" reason="Never" />
+    <disable_collisions link1="pg70_fingertip_left_link" link2="wrist_3_link" reason="Never" />
+    <disable_collisions link1="pg70_fingertip_right_link" link2="wrist_1_link" reason="Never" />
+    <disable_collisions link1="pg70_fingertip_right_link" link2="wrist_2_link" reason="Never" />
+    <disable_collisions link1="pg70_fingertip_right_link" link2="wrist_3_link" reason="Never" />
     <disable_collisions link1="shoulder_link" link2="upper_arm_link" reason="Adjacent" />
     <disable_collisions link1="shoulder_link" link2="wrist_1_link" reason="Never" />
     <disable_collisions link1="shoulder_link" link2="wrist_2_link" reason="Never" />
