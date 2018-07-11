@@ -68,7 +68,7 @@
  </joint>
 
   <!-- GRIPPER -->
-  <xacro:schunk_pg70 name="schunk_pg70" parent="gripper_link">
+  <xacro:schunk_pg70 name="pg70" parent="gripper_link">
     <origin xyz="0 0.0 0.0091" rpy="0 0 0" /> <!--slightly above gazebo plane-->
   </xacro:schunk_pg70>
 
@@ -118,7 +118,7 @@
   </link>
 
   <joint name="gripper_power_joint" type="fixed">
-    <parent link="schunk_pg70_base_link"/>
+    <parent link="pg70_base_link"/>
     <child link="gripper_power_box"/>
     <origin xyz="0.004 -0.08 0.03" rpy="0.0 0.0 ${pi/2}" />
  </joint>

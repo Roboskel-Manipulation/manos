@@ -25,7 +25,7 @@
         <geometry>
           <mesh filename="package://schunk_pg70/meshes/pg70.dae" />
         </geometry>
-    <material name="blue"/>
+        <material name="blue"/>
       </collision>
       <inertia>
           <origin xyz="0.000019 -0.000347 0.028892"/>
@@ -36,15 +36,15 @@
 
 <!-- LEFT FINGER BASE -->
     
-    <joint name="${name}_finger_left_joint" type="prismatic" >
+    <joint name="${name}_finger1_joint" type="prismatic" >
       <parent link="${name}_base_link" />
-      <child link="${name}_finger_left_link" />
+      <child link="${name}_finger1_link" />
       <limit effort="100" lower="-0.001" upper="0.04" velocity="2.0"/>
-      <origin xyz="0 0 0.0789" rpy="0 0 0"/>
+      <origin xyz="0 0.03 0.0789" rpy="0 0 0"/>
       <axis xyz="0 1 0" />
     </joint>
 
-    <link name="${name}_finger_left_link">
+    <link name="${name}_finger1_link">
       <visual>
         <geometry>
           <box size="0.03 0.01 0.01"/>
@@ -57,7 +57,7 @@
         <geometry>
           <box size="0.03 0.01 0.01"/>
         </geometry>
-    <material name="black" />
+        <material name="black" />
       </collision>
        <inertial> <origin xyz="0 0 0" rpy="0 0 0"/> <mass value="1"/> <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/> </inertial>
     </link>
@@ -65,7 +65,7 @@
 <!-- LEFT FINGERTIP -->
     
     <joint name="${name}_fingertip_left_joint" type="fixed" >
-      <parent link="${name}_finger_left_link" />
+      <parent link="${name}_finger1_link" />
       <child link="${name}_fingertip_left_link" />
       <origin xyz="0.015 -0.001 0.045" rpy="${pi/2} 0 -${pi/2}"/>
     </joint>
@@ -83,22 +83,22 @@
          <geometry>
           <mesh filename="package://manos_description/meshes/schunk_pg70/finger.stl" />
         </geometry>
-           <material name="black"/>
+        <material name="black"/>
       </collision>
     </link>
     
 <!-- RIGHT FINGER BASE -->
 
-    <joint name="${name}_finger_right_joint" type="prismatic" >
-      <mimic joint="${name}_finger_left_joint" multiplier="1" offset="0"/>
+    <joint name="${name}_finger2_joint" type="prismatic" >
+      <mimic joint="${name}_finger1_joint" multiplier="1" offset="0"/>
       <parent link="${name}_base_link" />
-      <child link="${name}_finger_right_link" />
+      <child link="${name}_finger2_link" />
       <limit effort="100" lower="-0.001" upper="0.04" velocity="2.0"/>
-      <origin xyz="0 0 0.0789" rpy="-0 0 0"/>
+      <origin xyz="0 -0.03 0.0789" rpy="-0 0 0"/>
       <axis xyz="0 -1 0" />
     </joint>
 
-    <link name="${name}_finger_right_link">
+    <link name="${name}_finger2_link">
       <visual>
         <geometry>
           <box size="0.03 0.01 0.01"/>
@@ -109,7 +109,7 @@
         <geometry>
           <box size="0.03 0.01 0.01"/>
         </geometry>
-    <material name="black"/>
+        <material name="black"/>
       </collision>
        <inertial> <origin xyz="0 0 0" rpy="0 0 0"/> <mass value="1"/> <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/> </inertial>
     </link>
@@ -117,7 +117,7 @@
 <!-- RIGHT FINGERTIP -->
 
     <joint name="${name}_fingertip_right_joint" type="fixed" >
-      <parent link="${name}_finger_right_link" />
+      <parent link="${name}_finger2_link" />
       <child link="${name}_fingertip_right_link" />
      <origin xyz="-0.015 0.001 0.045" rpy="${pi/2} 0 ${pi/2}"/>
    </joint>
@@ -133,7 +133,7 @@
          <geometry>
           <mesh filename="package://manos_description/meshes/schunk_pg70/finger.stl" />
         </geometry>
-    <material name="black"/>
+        <material name="black"/>
      </collision>
     </link>
 

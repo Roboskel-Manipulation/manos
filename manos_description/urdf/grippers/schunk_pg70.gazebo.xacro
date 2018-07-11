@@ -8,12 +8,12 @@
       <self_collide>false</self_collide>
     </gazebo>
   
-    <gazebo reference="${name}_finger_left_link">
+    <gazebo reference="${name}_finger1_link">
       <gravity>true</gravity>
       <self_collide>false</self_collide>
     </gazebo>
   
-    <gazebo reference="${name}_finger_right_link">
+    <gazebo reference="${name}_finger2_link">
       <gravity>true</gravity>
       <self_collide>false</self_collide>
     </gazebo>
