@@ -4,8 +4,10 @@
 
   <!-- Params for the octomap monitor -->
   <!--  <param name="octomap_frame" type="string" value="some frame in which the robot moves" /> -->
+  <rosparam command="load" file="$(find manos_moveit_config)/config/xtion_astra.yaml" />
   <param name="octomap_resolution" type="double" value="0.025" />
   <param name="max_range" type="double" value="5.0" />
+  <param name="/move_group/planning_scene_monitor/shape_transform_cache_lookup_wait_time" type="double" value="1.0" />
 
   <!-- Load the robot specific sensor manager; this sets the moveit_sensor_manager ROS parameter -->
   <arg name="moveit_sensor_manager" default="manos" />

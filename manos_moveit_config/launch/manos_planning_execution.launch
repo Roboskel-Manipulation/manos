@@ -10,4 +10,5 @@
   <include file="$(find manos_moveit_config)/launch/move_group.launch">
     <arg name="debug" default="$(arg debug)" />
   </include>
+  <include file="$(find manos_moveit_config)/launch/sensor_manager.launch.xml" />
 </launch>
