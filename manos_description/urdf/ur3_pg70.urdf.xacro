@@ -69,7 +69,7 @@
 
   <!-- GRIPPER -->
   <xacro:schunk_pg70 name="pg70" parent="gripper_link">
-    <origin xyz="0 0.0 0.0091" rpy="0 0 0" /> <!--slightly above gazebo plane-->
+    <origin xyz="0 0.0 0.0091" rpy="${pi} -${pi/2} 0" /> <!--slightly above gazebo plane-->
   </xacro:schunk_pg70>
 
  <!--<joint name="ar_marker_joint" type="fixed">
