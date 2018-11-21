@@ -16,6 +16,10 @@ The ultimate repo to start playing with Manos, roboskel's UR3!
 
 `roslaunch manos_moveit_config manos_planning_execution.launch`
 
+or if simulating
+
+`roslaunch manos_moveit_config manos_planning_execution.launch sim:=true`
+
 
 # Start rviz with MoveIt! plugins
 
