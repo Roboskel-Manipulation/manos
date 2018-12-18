@@ -16,6 +16,8 @@
   <build_depend>joint_trajectory_controller</build_depend>
   <build_depend>manos_description</build_depend>
   <build_depend>robot_state_publisher</build_depend>
+  <build_depend>ur_gazebo</build_depend>
+  <build_depend>moveit_kinematics</build_depend>
   <build_export_depend>controller_manager</build_export_depend>
   <build_export_depend>effort_controllers</build_export_depend>
   <build_export_depend>gazebo_ros</build_export_depend>
@@ -24,6 +26,8 @@
   <build_export_depend>joint_trajectory_controller</build_export_depend>
   <build_export_depend>manos_description</build_export_depend>
   <build_export_depend>robot_state_publisher</build_export_depend>
+  <build_export_depend>ur_gazebo</build_export_depend>
+  <build_export_depend>moveit_kinematics</build_export_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>effort_controllers</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
@@ -32,5 +36,7 @@
   <exec_depend>joint_trajectory_controller</exec_depend>
   <exec_depend>manos_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ur_gazebo</exec_depend>
+  <exec_depend>moveit_kinematics</exec_depend>
 
 </package>
