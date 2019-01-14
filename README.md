@@ -28,6 +28,8 @@ or if simulating
 
 # :warning: Important Dependencies
 
-The `ur_modern_driver` used is the one forked by `beta-robots` to support `ROS Kinetic` (https://github.com/beta-robots/ur_modern_driver).
+* The `ur_modern_driver` used is the one forked by `beta-robots` to support `ROS Kinetic` and onwards (Tested on ROS `Melodic`) (https://github.com/beta-robots/ur_modern_driver).
+
+* The `schunk_grippers` used is the one forked by `gstavrinos` to support `ROS Melodic` and provide more accurate Schunk PG70 description (https://github.com/gstavrinos/schunk_grippers)
 
 
