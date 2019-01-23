@@ -21,6 +21,10 @@ or if simulating
 `roslaunch manos_moveit_config manos_planning_execution.launch sim:=true`
 
 
+## Note
+
+If you find that the MoveIt planners fail too often, you can use the limited version of the UR3. To do that, just add the `limited:=true` remap after <b>each</b> of the commands discussed above.
+
 # Start rviz with MoveIt! plugins
 
 `roslaunch manos_moveit_config moveit_rviz.launch config:=true`
