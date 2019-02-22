@@ -72,22 +72,5 @@
     <origin xyz="0.0095 0 0" rpy="${pi} -${pi/2} 0" />
   </xacro:schunk_pg70>
 
- <!--<joint name="ar_marker_joint" type="fixed">
-    <parent link="base_link"/>
-    <child link="ar_marker_link"/>
-    <origin xyz="-0.41 0.41 0.00" rpy="0.0 0.0 0.0" />
- </joint>
-
- <link name="ar_marker_link">
-  </link>-->
-
-
-  <gazebo>
-      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <!--<robotNamespace>ur3_pg70</robotNamespace>-->
-         <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-      </plugin>
-  </gazebo>
-
 </robot>
 
