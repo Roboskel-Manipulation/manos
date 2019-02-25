@@ -10,22 +10,24 @@
       <xacro:insert_block name="origin" />
     </joint>
 
+    <xacro:schunk_pg70_transmission name="${name}"/>
+    <xacro:schunk_pg70_gazebo name="${name}" />
 
-  <material name="silver">
-    <color rgba="0.5 0.5 0.5 1"/>
-  </material>
+    <material name="silver">
+      <color rgba="0.5 0.5 0.5 1"/>
+    </material>
 
-  <material name="light_silver">
-    <color rgba="0.7 0.7 0.7 1"/>
-  </material>
+    <material name="light_silver">
+      <color rgba="0.7 0.7 0.7 1"/>
+    </material>
 
-  <material name="white">
-    <color rgba="1 1 1 1"/>
-  </material>
+    <material name="white">
+      <color rgba="1 1 1 1"/>
+    </material>
 
-  <material name="black">
-    <color rgba="0 0 0 1"/>
-  </material>
+    <material name="black">
+      <color rgba="0 0 0 1"/>
+    </material>
 
 <!--     PALM -->
     
@@ -52,8 +54,8 @@
     <joint name="${name}_finger1_joint" type="prismatic" >
       <parent link="${name}_base_link" />
       <child link="${name}_finger1_link" />
-      <limit effort="100" lower="-0.001" upper="0.04" velocity="2.0"/>
-      <origin xyz="0 0.04 0.095" rpy="0 0 0"/>
+      <limit effort="100" lower="0.0015" upper="0.04" velocity="2.0"/>
+      <origin xyz="0 0.0015 0.095" rpy="0 0 0"/>
       <axis xyz="0 1 0" />
     </joint>
 
@@ -101,11 +103,11 @@
 <!-- RIGHT FINGER BASE -->
 
     <joint name="${name}_finger2_joint" type="prismatic" >
-      <mimic joint="${name}_finger1_joint" multiplier="1" offset="0"/>
+      <!-- <mimic joint="${name}_finger1_joint" multiplier="1" offset="0"/> -->
       <parent link="${name}_base_link" />
       <child link="${name}_finger2_link" />
-      <limit effort="100" lower="-0.001" upper="0.04" velocity="2.0"/>
-      <origin xyz="0 -0.04 0.095" rpy="-0 0 0"/>
+      <limit effort="100" lower="0.0015" upper="0.04" velocity="2.0"/>
+      <origin xyz="0 -0.0015 0.095" rpy="-0 0 0"/>
       <axis xyz="0 -1 0" />
     </joint>
 
@@ -189,9 +191,6 @@
     <child link="gripper_power_cable"/>
     <origin xyz="-0.01 -0.042 -0.011" rpy="${pi/2} 0.0 0.0" />
  </joint>
-
-    <xacro:schunk_pg70_transmission name="${name}"/>
-    <xacro:schunk_pg70_gazebo name="${name}" />
 
   </xacro:macro>
 </robot>
