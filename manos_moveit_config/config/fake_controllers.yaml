@@ -9,4 +9,5 @@ controller_list:
       - wrist_3_joint
   - name: fake_gripper_controller
     joints:
-      - schunk_pg70_finger_left_joint
+      - pg70_finger1_joint
+      - pg70_finger2_joint

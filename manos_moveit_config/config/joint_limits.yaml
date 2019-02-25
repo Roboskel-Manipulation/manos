@@ -7,12 +7,12 @@ joint_limits:
     max_velocity: 3.15
     has_acceleration_limits: false
     max_acceleration: 0
-  schunk_pg70_finger_left_joint:
+  pg70_finger1_joint:
     has_velocity_limits: true
     max_velocity: 2
     has_acceleration_limits: false
     max_acceleration: 0
-  schunk_pg70_finger_right_joint:
+  pg70_finger2_joint:
     has_velocity_limits: true
     max_velocity: 2
     has_acceleration_limits: false
