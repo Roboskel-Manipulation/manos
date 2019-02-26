@@ -19,6 +19,13 @@
         <joint name="wrist_3_joint" />
     </group>
     <group name="gripper">
+        <link name="ee_link" />
+        <link name="gripper_link" />
+        <link name="pg70_base_link" />
+        <link name="gripper_power_box" />
+        <link name="gripper_power_cable" />
+        <link name="pg70_fingertip_left_link" />
+        <link name="pg70_fingertip_right_link" />
         <joint name="pg70_finger1_joint" />
         <joint name="pg70_finger2_joint" />
     </group>
