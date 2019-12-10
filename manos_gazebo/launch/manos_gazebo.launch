@@ -20,8 +20,10 @@
   <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
 
   <rosparam file="$(find manos_gazebo)/config/manos_controller.yaml" command="load"/>
-  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
-  <node name="gripper_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn gripper_controller" respawn="false" output="screen"/>
+  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="load arm_controller" respawn="false" output="screen"/>
+  
+  <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
+  <node name="arm_controller_spawner_2" pkg="controller_manager" type="controller_manager" args="load cartesian_velocity_controller" respawn="false" output="screen"/>
 
 
 </launch>

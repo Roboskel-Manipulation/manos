@@ -40,7 +40,7 @@
     <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
  </joint>
 
-  <link name="gripper_link">
+<!--   <link name="gripper_link">
     <visual>
       <geometry>
         <box size="0.005 0.113 0.08 "/>
@@ -66,12 +66,12 @@
     <child link="gripper_link"/>
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
  </joint>
-
+ -->
   <!-- GRIPPER -->
-  <xacro:schunk_pg70 name="pg70" parent="gripper_link">
+<!--   <xacro:schunk_pg70 name="pg70" parent="gripper_link">
     <origin xyz="0.0095 0 0" rpy="${pi} -${pi/2} 0" />
   </xacro:schunk_pg70>
-
+ -->
   <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
         <robotNamespace></robotNamespace>

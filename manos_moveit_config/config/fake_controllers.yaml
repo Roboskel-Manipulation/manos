@@ -7,7 +7,7 @@ controller_list:
       - wrist_1_joint
       - wrist_2_joint
       - wrist_3_joint
-  - name: fake_gripper_controller
-    joints:
-      - pg70_finger1_joint
-      - pg70_finger2_joint
+  # - name: fake_gripper_controller
+  #   joints:
+  #     - pg70_finger1_joint
+  #     - pg70_finger2_joint

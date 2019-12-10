@@ -1,0 +1,15 @@
+arm_controller:
+  
+  # Controller for position control of the end effector
+  cartesian_state_controller:
+    type: cartesian_controller/CartesianStateController
+    publish_rate: 125
+    root_name: base_link
+    tip_name: ee_link
+
+  # Controller for velocity control of the end effector
+  cartesian_velocity_controller:
+    type: cartesian_controller/CartesianVelocityController
+    publish_rate: 125
+    root_name: base_link
+    tip_name: ee_link
