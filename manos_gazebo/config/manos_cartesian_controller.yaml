@@ -1,15 +1,33 @@
-arm_controller:
-  
-  # Controller for position control of the end effector
-  cartesian_state_controller:
-    type: cartesian_controller/CartesianStateController
-    publish_rate: 125
-    root_name: base_link
-    tip_name: ee_link
+hardware_control_loop:
+  loop_hz: 125
 
-  # Controller for velocity control of the end effector
-  cartesian_velocity_controller:
-    type: cartesian_controller/CartesianVelocityController
-    publish_rate: 125
-    root_name: base_link
-    tip_name: ee_link
+# Settings for ros_control hardware interface
+hardware_interface:
+   joints:
+     - shoulder_pan_joint
+     - shoulder_lift_joint
+     - elbow_joint
+     - wrist_1_joint
+     - wrist_2_joint
+     - wrist_3_joint
+
+
+# Controller for position control of the end effector
+manos_cartesian_state_controller:
+  type: cartesian_controller/CartesianStateController
+  publish_rate: 125
+  root_name: base_link
+  tip_name: ee_link
+
+# Controller for velocity control of the end effector
+manos_cartesian_velocity_controller:
+  type: cartesian_controller/CartesianVelocityController
+  publish_rate: 125
+  root_name: base_link
+  tip_name: ee_link
+
+manos_cartesian_velocity_controller_sim:
+  type: cartesian_controller/CartesianVelocityControllerSim
+  publish_rate: 125
+  root_name: base_link
+  tip_name: ee_link
