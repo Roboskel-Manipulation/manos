@@ -2,8 +2,6 @@
 
 AdmittanceController::AdmittanceController(ros::NodeHandle &n,
     double frequency,
-    std::string topic_platform_command,
-    std::string topic_platform_state,
     std::string topic_arm_command,
     std::string topic_arm_pose_world,
     std::string topic_arm_twist_world,
@@ -16,18 +14,13 @@ AdmittanceController::AdmittanceController(ros::NodeHandle &n,
     std::string topic_equilibrium_desired,
     std::string topic_equilibrium_real,
     std::string topic_ds_velocity,
-    std::vector<double> M_p,
     std::vector<double> M_a,
-    std::vector<double> D,
-    std::vector<double> D_p,
     std::vector<double> D_a,
     std::vector<double> K,
     std::vector<double> d_e,
     std::vector<double> workspace_limits,
     double arm_max_vel,
     double arm_max_acc,
-    double platform_max_vel,
-    double platform_max_acc,
     double wrench_filter_factor,
     double force_dead_zone_thres,
     double torque_dead_zone_thres) :
@@ -35,19 +28,13 @@ AdmittanceController::AdmittanceController(ros::NodeHandle &n,
   wrench_filter_factor_(wrench_filter_factor),
   force_dead_zone_thres_(force_dead_zone_thres),
   torque_dead_zone_thres_(torque_dead_zone_thres),
-  M_p_(M_p.data()), M_a_(M_a.data()), D_(D.data()),
-  D_p_(D_p.data()), D_a_(D_a.data()), K_(K.data()),
+  M_a_(M_a.data()), D_a_(D_a.data()), K_(K.data()),
   workspace_limits_(workspace_limits.data()),
   arm_max_vel_(arm_max_vel),
-  arm_max_acc_(arm_max_acc),
-  platform_max_vel_(platform_max_vel),
-  platform_max_acc_(platform_max_acc) {
+  arm_max_acc_(arm_max_acc){
 
 
   // Subscribers
-  sub_platform_state_ = nh_.subscribe(topic_platform_state, 5,
-                                      &AdmittanceController::state_platform_callback, this,
-                                      ros::TransportHints().reliable().tcpNoDelay());
   sub_arm_state_ = nh_.subscribe(topic_arm_state, 10,
                                  &AdmittanceController::state_arm_callback, this,
                                  ros::TransportHints().reliable().tcpNoDelay());
@@ -73,7 +60,6 @@ AdmittanceController::AdmittanceController(ros::NodeHandle &n,
 
 
   // Publishers
-  pub_platform_cmd_ = nh_.advertise<geometry_msgs::Twist>(topic_platform_command, 5);
   pub_arm_cmd_ = nh_.advertise<geometry_msgs::Twist>(topic_arm_command, 5);
 
   pub_ee_pose_world_ = nh_.advertise<geometry_msgs::PoseStamped>(
@@ -93,7 +79,6 @@ AdmittanceController::AdmittanceController(ros::NodeHandle &n,
 
 
   ROS_INFO_STREAM("Arm max vel:" << arm_max_vel_ << " max acc:" << arm_max_acc_);
-  ROS_INFO_STREAM("Platform max vel:" << platform_max_vel_ << " max acc:" << platform_max_acc_);
 
 
   // initializing the class variables
@@ -107,8 +92,7 @@ AdmittanceController::AdmittanceController(ros::NodeHandle &n,
   Vector7d equilibrium_full(d_e.data());
   equilibrium_position_ << equilibrium_full.topRows(3);
 
-  // This does not change
-  equilibrium_position_seen_by_platform << equilibrium_full.topRows(3);
+
   // Make sure the orientation goal is normalized
   equilibrium_orientation_.coeffs() << equilibrium_full.bottomRows(4) /
                                     equilibrium_full.bottomRows(4).norm();
@@ -121,7 +105,6 @@ AdmittanceController::AdmittanceController(ros::NodeHandle &n,
 
   // setting the robot state to zero and wait for data
   arm_real_position_.setZero();
-  platform_real_position_.setZero();
 
   while (nh_.ok() && !arm_real_position_(0)) {
     ROS_WARN_THROTTLE(1, "Waiting for the state of the arm...");
@@ -131,27 +114,9 @@ AdmittanceController::AdmittanceController(ros::NodeHandle &n,
 
   // Init integrator
   arm_desired_twist_adm_.setZero();
-  platform_desired_twist_.setZero();
 
   arm_desired_twist_ds_.setZero();
   arm_desired_twist_final_.setZero();
-
-
-  // Kinematic constraints between base and arm at the equilibrium
-  // the base only effected by arm in x,y and rz
-  kin_constraints_.setZero();
-  kin_constraints_.topLeftCorner(2, 2).setIdentity();
-  kin_constraints_.bottomRightCorner(1, 1).setIdentity();
-
-
-  // kin_constraints_.setZero();
-  // kin_constraints_.topLeftCorner(3, 3).setIdentity();
-  // kin_constraints_.bottomRightCorner(3, 3).setIdentity();
-  // Screw on the z torque axis
-  // kin_constraints_.topRightCorner(3, 3) <<
-  //                                       0, 0, equilibrium_position_(1),
-  //                                       0, 0, -equilibrium_position_(0),
-  //                                       0, 0, 0;
 
 
   ft_arm_ready_ = false;
@@ -202,7 +167,6 @@ void AdmittanceController::run() {
 ///////////////////////////////////////////////////////////////
 void AdmittanceController::compute_admittance() {
 
-  Vector6d platform_desired_acceleration;
   Vector6d arm_desired_accelaration;
 
   Vector6d error;
@@ -225,30 +189,16 @@ void AdmittanceController::compute_admittance() {
 
 
   // Translation error w.r.t. desired equilibrium
-  error.topRows(3) = arm_real_position_ - equilibrium_position_seen_by_platform;
-  Vector6d coupling_wrench_platform =  D_ * (arm_desired_twist_adm_) + K_ * error;
 
   error.topRows(3) = arm_real_position_ - equilibrium_position_;
-  Vector6d coupling_wrench_arm =  D_ * (arm_desired_twist_adm_) + K_ * error;
 
 
-
-  platform_desired_acceleration = M_p_.inverse() * (- D_p_ * platform_desired_twist_
-                                  + rotation_base_ * kin_constraints_ * coupling_wrench_platform);
-  arm_desired_accelaration = M_a_.inverse() * ( - coupling_wrench_arm - D_a_ * arm_desired_twist_adm_
+  arm_desired_accelaration = M_a_.inverse() * ( - D_a_ * arm_desired_twist_adm_ - K_ * error
                              + admittance_ratio_ * wrench_external_ + wrench_control_);
 
   // limiting the accelaration for better stability and safety
   // x and y for  platform and x,y,z for the arm
-  double p_acc_norm = (platform_desired_acceleration.segment(0, 2)).norm();
   double a_acc_norm = (arm_desired_accelaration.segment(0, 3)).norm();
-
-  if (p_acc_norm > platform_max_acc_) {
-    ROS_WARN_STREAM_THROTTLE(1, "Admittance generates high platform accelaration!"
-                             << " norm: " << p_acc_norm);
-    platform_desired_acceleration.segment(0, 2) *= (platform_max_acc_ / p_acc_norm);
-  }
-
   if (a_acc_norm > arm_max_acc_) {
     ROS_WARN_STREAM_THROTTLE(1, "Admittance generates high arm accelaration!"
                              << " norm: " << a_acc_norm);
@@ -258,7 +208,6 @@ void AdmittanceController::compute_admittance() {
   // Integrate for velocity based interface
   ros::Duration duration = loop_rate_.expectedCycleTime();
 
-  platform_desired_twist_ += platform_desired_acceleration * duration.toSec();
   arm_desired_twist_adm_      += arm_desired_accelaration      * duration.toSec();
 
 
@@ -267,18 +216,6 @@ void AdmittanceController::compute_admittance() {
 ///////////////////////////////////////////////////////////////
 ////////////////////////// Callbacks //////////////////////////
 ///////////////////////////////////////////////////////////////
-void AdmittanceController::state_platform_callback(
-  const nav_msgs::OdometryConstPtr msg) {
-  platform_real_position_ << msg->pose.pose.position.x, msg->pose.pose.position.y,
-                          msg->pose.pose.position.z;
-  platform_real_orientation_.coeffs() << msg->pose.pose.orientation.x,
-                                    msg->pose.pose.orientation.y, msg->pose.pose.orientation.z,
-                                    msg->pose.pose.orientation.w;
-
-  platform_real_twist_ << msg->twist.twist.linear.x, msg->twist.twist.linear.y,
-                       msg->twist.twist.linear.z, msg->twist.twist.angular.x,
-                       msg->twist.twist.angular.y, msg->twist.twist.angular.z;
-}
 
 void AdmittanceController::state_arm_callback(
   const cartesian_state_msgs::PoseTwistConstPtr msg) {
@@ -432,19 +369,6 @@ void AdmittanceController::admittance_ratio_callback(const std_msgs::Float32Ptr 
 ///////////////////////////////////////////////////////////////
 void AdmittanceController::send_commands_to_robot() {
 
-  // for the platform
-  geometry_msgs::Twist platform_twist_cmd;
-
-  platform_twist_cmd.linear.x  = platform_desired_twist_(0);
-  platform_twist_cmd.linear.y  = platform_desired_twist_(1);
-  platform_twist_cmd.linear.z  = platform_desired_twist_(2);
-  platform_twist_cmd.angular.x = platform_desired_twist_(3);
-  platform_twist_cmd.angular.y = platform_desired_twist_(4);
-  platform_twist_cmd.angular.z = platform_desired_twist_(5);
-
-  pub_platform_cmd_.publish(platform_twist_cmd);
-
-
   // for the arm
   geometry_msgs::Twist arm_twist_cmd;
 
@@ -521,14 +445,6 @@ void AdmittanceController::limit_to_workspace() {
   }
 
   // velocity of the platfrom only along x and y axis
-  double norm_vel_platform = (platform_desired_twist_.segment(0, 2)).norm();
-
-  if (norm_vel_platform > platform_max_vel_) {
-    ROS_WARN_STREAM_THROTTLE(1, "Admittance generate fast platform movements! velocity norm: " << norm_vel_platform);
-
-    platform_desired_twist_.segment(0, 2) *= (platform_max_vel_ / norm_vel_platform);
-
-  }
 }
 
 
@@ -603,8 +519,7 @@ void AdmittanceController::publish_arm_state_in_world() {
     get_rotation_matrix(rotation_p_base_world, listener_arm_,
                         "world", "base_link");
 
-    ee_twist_world_ = rotation_a_base_world * arm_real_twist_
-                      + rotation_p_base_world * platform_real_twist_;
+    ee_twist_world_ = rotation_a_base_world * arm_real_twist_;
     // ee_twist_world_ = arm_real_twist_ + platform_real_twist_;
   }
 

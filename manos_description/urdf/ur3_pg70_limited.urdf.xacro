@@ -4,7 +4,8 @@
 <!-- schunk_pg70 -->
   <!-- <xacro:include filename="$(find manos_description)/urdf/grippers/schunk_pg70.urdf.xacro"/> -->
 <!-- ur3 -->
-  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" />
+<property name="prefix" value="" />
+  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" params="$(prefix) hardware_interface/VelocityJointInterface"/>
   
     <xacro:ur3_robot prefix="" joint_limited="true"
     shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
@@ -103,9 +104,8 @@
  -->
   <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotNamespace></robotNamespace>
-        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-        <legacyModeNS>true</legacyModeNS>
+        <robotNamespace>/</robotNamespace>
+        <!-- <robotSimType>hardware_interface/VelocityJointInterface</robotSimType> -->
       </plugin>
   </gazebo>
 

@@ -11,8 +11,7 @@ int main(int argc, char **argv)
   // Parameters
   std::string topic_arm_state;
   std::string topic_arm_command;
-  std::string topic_platform_state;
-  std::string topic_platform_command;
+
   std::string topic_external_wrench;
   std::string topic_control_wrench;
   std::string topic_equilibrium_desired;
@@ -35,9 +34,7 @@ int main(int argc, char **argv)
 
   double arm_max_vel;
   double arm_max_acc;
-  double platform_max_vel;
-  double platform_max_acc;
-
+  
   double wrench_filter_factor;
   double force_dead_zone_thres;
   double torque_dead_zone_thres;
@@ -54,16 +51,6 @@ int main(int argc, char **argv)
 
   if (!nh.getParam("topic_arm_command", topic_arm_command)) {
     ROS_ERROR("Couldn't retrieve the topic name for commanding the arm.");
-    return -1;
-  }
-
-  if (!nh.getParam("topic_platform_state", topic_platform_state)) {
-    ROS_ERROR("Couldn't retrieve the topic name for the state of the platform.");
-    return -1;
-  }
-
-  if (!nh.getParam("topic_platform_command", topic_platform_command)) {
-    ROS_ERROR("Couldn't retrieve the topic name for commanding the platform.");
     return -1;
   }
 
@@ -119,23 +106,9 @@ int main(int argc, char **argv)
 
 
   // ADMITTANCE PARAMETERS
-  if (!nh.getParam("mass_platform", M_p)) {
-    ROS_ERROR("Couldn't retrieve the desired mass platform.");
-    return -1;
-  }
 
   if (!nh.getParam("mass_arm", M_a)) {
     ROS_ERROR("Couldn't retrieve the desired mass of the arm.");
-    return -1;
-  }
-
-  if (!nh.getParam("damping_coupling", D)) {
-    ROS_ERROR("Couldn't retrieve the desired damping of the coupling.");
-    return -1;
-  }
-
-  if (!nh.getParam("damping_platform", D_p)) {
-    ROS_ERROR("Couldn't retrieve the desired damping of the platform.");
     return -1;
   }
 
@@ -172,17 +145,6 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  if (!nh.getParam("platform_max_vel", platform_max_vel)) {
-    ROS_ERROR("Couldn't retrieve the max velocity for the platform.");
-    return -1;
-  }
-
-  if (!nh.getParam("platform_max_acc", platform_max_acc)) {
-    ROS_ERROR("Couldn't retrieve the max acceleration for the platform.");
-    return -1;
-  }
-
-
 
   // FORCE/TORQUE-SENSOR PARAMETERS
   if (!nh.getParam("wrench_filter_factor", wrench_filter_factor)) {
@@ -206,8 +168,6 @@ int main(int argc, char **argv)
   AdmittanceController admittance_controller(
     nh,
     frequency,
-    topic_platform_command,
-    topic_platform_state,
     topic_arm_command,
     topic_arm_pose_world,
     topic_arm_twist_world,
@@ -220,10 +180,9 @@ int main(int argc, char **argv)
     topic_equilibrium_desired,
     topic_equilibrium_real,
     topic_ds_velocity,
-    M_p, M_a, D, D_p, D_a, K, d_e,
+    M_a, D_a, K, d_e,
     workspace_limits,
     arm_max_vel, arm_max_acc,
-    platform_max_vel, platform_max_acc,
     wrench_filter_factor,
     force_dead_zone_thres,
     torque_dead_zone_thres);

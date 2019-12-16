@@ -93,8 +93,6 @@ protected:
 
   // Subscribers:
 
-  // Subscriber for the platform state
-  ros::Subscriber sub_platform_state_;
   // Subscriber for the arm state
   ros::Subscriber sub_arm_state_;
   // Subscriber for the ft sensor at the endeffector
@@ -111,8 +109,6 @@ protected:
 
   // Publishers:
 
-  // Publisher for the twist of the platform
-  ros::Publisher pub_platform_cmd_;
   // Publisher for the twist of arm endeffector
   ros::Publisher pub_arm_cmd_;
   // Publisher for the pose of arm endeffector in the world frame
@@ -147,7 +143,7 @@ protected:
   // D_ -> Desired damping of the coupling
   // D_p_, D_a_ -> Desired damping of platform/arm
   // K_ -> Desired Stiffness of the coupling
-  Matrix6d M_p_, M_a_, D_, D_p_, D_a_, K_;
+  Matrix6d M_a_, D_a_, K_;
   // equilibrium position of the coupling spring
   Vector3d equilibrium_position_;
   Vector3d equilibrium_position_seen_by_platform;
@@ -167,24 +163,16 @@ protected:
   // OUTPUT COMMANDS
   // final arm desired velocity 
   Vector6d arm_desired_twist_final_;
-  // the desired velcoities computed by the admittance control
-  Vector6d platform_desired_twist_;
 
   // limiting the workspace of the arm
   Vector6d workspace_limits_;
   double arm_max_vel_;
   double arm_max_acc_;
-  double platform_max_vel_;
-  double platform_max_acc_;
 
 
   // STATE VARIABLES:
-  // Platform state: position, orientation, and twist (in "platform base_link")
-  Vector3d platform_real_position_;
-  Quaterniond platform_real_orientation_;
-  Vector6d platform_real_twist_;
 
-  // Arm state: position, orientation, and twist (in "ur5_arm_base_link")
+  // Arm state: position, orientation, and twist (in "base_link")
   Vector3d arm_real_position_;
   Quaterniond arm_real_orientation_;
   Vector6d arm_real_twist_;
@@ -222,7 +210,6 @@ protected:
 
 
   // Callbacks
-  void state_platform_callback(const nav_msgs::OdometryConstPtr msg);
   void state_arm_callback(const cartesian_state_msgs::PoseTwistConstPtr msg);
   void wrench_callback(const geometry_msgs::WrenchStampedConstPtr msg);
   void wrench_control_callback(const geometry_msgs::WrenchStampedConstPtr msg);
@@ -254,8 +241,6 @@ protected:
 
 public:
   AdmittanceController(ros::NodeHandle &n, double frequency,
-                       std::string cmd_topic_platform,
-                       std::string state_topic_platform,
                        std::string cmd_topic_arm,
                        std::string topic_arm_pose_world,
                        std::string topic_arm_twist_world,
@@ -268,18 +253,13 @@ public:
                        std::string topic_equilibrium_deisred,
                        std::string topic_equilibrium_real,
                        std::string topic_ds_velocity,
-                       std::vector<double> M_p,
                        std::vector<double> M_a,
-                       std::vector<double> D,
-                       std::vector<double> D_p,
                        std::vector<double> D_a,
                        std::vector<double> K,
                        std::vector<double> d_e,
                        std::vector<double> workspace_limits,
                        double arm_max_vel,
                        double arm_max_acc,
-                       double platform_max_vel,
-                       double platform_max_acc,
                        double wrench_filter_factor,
                        double force_dead_zone_thres,
                        double torque_dead_zone_thres);

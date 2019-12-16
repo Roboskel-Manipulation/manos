@@ -66,19 +66,19 @@ void CartesianVelocityControllerBase<T>::update(const ros::Time& time, const ros
     this->joint_msr_.qdot(i)      = this->joint_handles_[i].getVelocity();
   }
   
-  // if (x_dt_des_ == KDL::Twist::Zero()){
-  //   for(std::size_t i=0; i < this->joint_handles_.size(); i++){
-  //     this->joint_msr_.q(i)         = 0;
-  //     this->joint_msr_.qdot(i)      = 0;
-  //   }    
-  // }
-  // else{
-  //   // Compute inverse kinematics velocity solver
-  //   ik_vel_solver_->CartToJnt(this->joint_msr_.q, x_dt_des_, q_dt_cmd_);
-  // }
+  if (x_dt_des_ == KDL::Twist::Zero()){
+    for(std::size_t i=0; i < this->joint_handles_.size(); i++){
+      this->joint_msr_.q(i)         = 0;
+      this->joint_msr_.qdot(i)      = 0;
+    }    
+  }
+  else{
+    // Compute inverse kinematics velocity solver
+    ik_vel_solver_->CartToJnt(this->joint_msr_.q, x_dt_des_, q_dt_cmd_);
+  }
 
   
-  ik_vel_solver_->CartToJnt(this->joint_msr_.q, x_dt_des_, q_dt_cmd_);
+  // ik_vel_solver_->CartToJnt(this->joint_msr_.q, x_dt_des_, q_dt_cmd_);
   writeVelocityCommands(period);
 
   // Forward kinematics
