@@ -27,7 +27,7 @@ stiffness_coupling: [10,0,0,0,0,0,
 # [position (x, y, z)  orientation (x, y, z, w)]
 equilibrium_point_spring: [0.1,0.4,0.5,-0.593599, -0.566706, -0.369419, 0.435908]
 
-workspace_limits: [-0.50, 0.50, -0.50, 0.50, 0.10, 0.80]
+workspace_limits: [-0.50, 0.50, -0.50, 0.50, 0.01, 0.80]
 
 arm_max_vel: 10.5
 arm_max_acc: 10.0
