@@ -11,6 +11,8 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>ur_description</depend>
   <depend>openni_description</depend>
+  <depend>schunk_pg70</depend>
+
 
   <export>
   </export>
