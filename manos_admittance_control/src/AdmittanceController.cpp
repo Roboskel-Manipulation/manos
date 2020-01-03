@@ -192,6 +192,8 @@ void AdmittanceController::compute_admittance() {
 
   error.topRows(3) = arm_real_position_ - equilibrium_position_;
 
+  std::cout << "Wrench External: " <<  wrench_external_ << std::endl;
+  std::cout << "Wrench Control: " <<  wrench_control_ << std::endl;
 
   arm_desired_accelaration = M_a_.inverse() * ( - D_a_ * arm_desired_twist_adm_ - K_ * error
                              + admittance_ratio_ * wrench_external_ + wrench_control_);
@@ -234,6 +236,7 @@ void AdmittanceController::state_arm_callback(
 
 void AdmittanceController::wrench_callback(
   const geometry_msgs::WrenchStampedConstPtr msg) {
+
   Vector6d wrench_ft_frame;
   Matrix6d rotation_ft_base;
   if (ft_arm_ready_) {
@@ -269,7 +272,9 @@ void AdmittanceController::wrench_callback(
 
     // Filter and update
     wrench_external_ <<  (1 - wrench_filter_factor_) * wrench_external_ +
-                     wrench_filter_factor_ * rotation_ft_base * wrench_ft_frame;
+                     wrench_filter_factor_ * wrench_ft_frame;
+    
+    // ROS_INFO("Wrench External: %f", wrench_external_);
   }
 }
 
