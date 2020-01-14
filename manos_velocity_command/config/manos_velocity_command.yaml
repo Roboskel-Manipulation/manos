@@ -1,0 +1,40 @@
+topic_arm_state: manos_cartesian_velocity_controller_sim/ee_state
+topic_arm_command: manos_cartesian_velocity_controller_sim/command_cart_vel
+topic_equilibrium_desired: admittance_control/equilibrium_desired
+topic_equilibrium_real: admittance_control/equilibrium_real
+topic_ds_velocity: ds_desired_velocity
+topic_arm_pose_world: admittance_control/pose_world
+topic_arm_twist_world: admittance_control/twist_world
+
+
+mass_arm: [2,0,0,0,0,0,
+           0,2,0,0,0,0,
+           0,0,2,0,0,0,
+           0,0,0,2,0,0,
+           0,0,0,0,2,0,
+           0,0,0,0,0,2]
+
+damping_arm: [12,0,0,0,0,0,
+              0,12,0,0,0,0,
+              0,0,12,0,0,0,
+              0,0,0,10,0,0,
+              0,0,0,0,10,0,
+              0,0,0,0,0,10]
+
+stiffness_coupling: [10,0,0,0,0,0,
+                     0,20,0,0,0,0,
+                     0,0,10,0,0,0,
+                     0,0,0,10,0,0,
+                     0,0,0,0,10,0,
+                     0,0,0,0,0,10]
+# [position (x, y, z)  orientation (x, y, z, w)]
+equilibrium_point_spring: [0.257, 0.214, 0.367, 0.5, 0.5, 0.5, -0.5]
+
+workspace_limits: [-0.50, 0.50, -0.50, 0.50, 0.01, 0.80]
+
+arm_max_vel: 10.5
+arm_max_acc: 10.0
+
+eq1: [0.2, 0.2, 0.2, 0.5, 0.5, 0.5, -0.5]
+eq2: [-0.2, -0.2, 0.2, 0.5, 0.5, 0.5, -0.5]
+

@@ -5,6 +5,7 @@
   <arg name="gui" default="false"/>
   <arg name="limited" default="false"/>
   <arg name="rviz_conf" default="$(find manos_gazebo)/config/rviz/manos.rviz"/>
+  <arg name="cart_control" default="false"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="worlds/empty.world"/>
@@ -16,9 +17,6 @@
     <arg name="limited" value="$(arg limited)"/>
   </include>
 
-<!--   <include file="$(find ur_description)/launch/ur5_upload.launch">
-    <arg name="limited" value="$(arg limited)"/>
-  </include> -->
 
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -z 0.0 " respawn="false" output="screen" />
   
@@ -37,21 +35,26 @@
       <remap from="wrench" to="admittance_control/wrench" />
   </node>
  -->
+ <!-- 
   <node  name="openpose_wrench" pkg="frame_transpose" type="mean_value_wrench.py"
       required="true" output="screen">
       <remap from="wrench" to="admittance_control/wrench" />
   </node>
-
+ -->
   <!-- FAKE FT sensor -->
-  <node pkg="tf" type="static_transform_publisher" name="FT300_static"
+<!--   <node pkg="tf" type="static_transform_publisher" name="FT300_static"
     args="0.0 0.0 0.0 0.0 0.0 0.0 FT300_link robotiq_force_torque_frame_id 1" />
 
   <node pkg="tf" type="static_transform_publisher" name="virtual_force_base_static"
     args="-0.3 -0.3 0.15 0.0 0.0 0.0 base_link virtual_force_base_frame 1" />
+ -->
 
-<!--   <rosparam file="$(find manos_gazebo)/config/manos_controller.yaml" command="load"/>
-  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/> -->
-
+  <!-- Load Joint Controller -->
+  <group unless="$(arg cart_control)">
+    <rosparam file="$(find manos_gazebo)/config/manos_controller.yaml" command="load"/>
+    <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
+  </group>
+  
   <!-- Fake Calibration -->
   <node pkg="rostopic" type="rostopic" name="fake_joint_calibration"
         args="pub /calibrated std_msgs/Bool true" />
@@ -59,12 +62,14 @@
   <!-- joint_state_controller -->
   <rosparam file="$(find manos_gazebo)/config/joint_state_controller.yaml" command="load"/>
   <node name="joint_state_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn joint_state_controller" respawn="false" output="screen"/>
-
-  <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
-  <node name="arm_cartesian_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn manos_cartesian_velocity_controller_sim" respawn="false" output="screen"/>
-
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/>
-
-  <!-- <node name="cmd_publisher" pkg="simple_pkg" type="main" respawn="false" output="screen"/> -->
   
+  <!-- Load Cartesian Controller -->
+  <group if="$(arg cart_control)">
+    <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
+    <node name="arm_cartesian_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn manos_cartesian_velocity_controller_sim" respawn="false" output="screen"/>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/>
+
+  </group>
+
 </launch>
