@@ -37,3 +37,9 @@ add_dependencies(velocity_controller_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${
 target_link_libraries(velocity_controller_node
    ${catkin_LIBRARIES}
 )
+
+add_executable(velocity_main src/main.cpp)
+target_link_libraries(velocity_main ${catkin_LIBRARIES})
+
+add_executable(sample src/sample.cpp)
+target_link_libraries(sample ${catkin_LIBRARIES})
