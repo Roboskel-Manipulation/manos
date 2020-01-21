@@ -30,12 +30,12 @@ void init_b(){
 void update_b(){
 	if (apply_change){
 		if (flagB){
-			b->at(0) -= 0.05;
-			b->at(1) += 0.05;
+			b->at(0) -= 0.02;
+			b->at(1) += 0.02;
 		}
 		else{
-			b->at(0) += 0.05;
-			b->at(1) -= 0.05;	
+			b->at(0) += 0.02;
+			b->at(1) -= 0.02;	
 		}
 	}
 	ROS_INFO("B0: %f", b->at(0));
@@ -44,11 +44,11 @@ void update_b(){
 	if (b->at(0) >= 1.0f or b->at(1) >= 1.0f){
 		// std::cout << "ok" << std::endl;
 		flagB = !flagB;
-		apply_change = false;
+		// apply_change = false;
 	}
 }
 
-void final_twist_construct(){
+void desired_twist(){
 	final_twist.linear.x = b->at(0)*twist1->linear.x + b->at(1)*twist2->linear.x;
 	final_twist.linear.y = b->at(0)*twist1->linear.y + b->at(1)*twist2->linear.y;
 	// final_twist.linear.x = twist1->linear.x;
@@ -78,7 +78,7 @@ void state_callback(const cartesian_state_msgs::PoseTwistPtr msg){
 	// 	twist_construct(velX, velY);
 	// }
 	
-	final_twist_construct();
+	desired_twist();
 	if (b->at(0) >= 1 or b->at(1) >= 1)
 		ros::Duration(2).sleep();
 	else
@@ -87,7 +87,7 @@ void state_callback(const cartesian_state_msgs::PoseTwistPtr msg){
 	update_b();
 }
 
-
+bool flagx=true;
 
 void state_callback1(const cartesian_state_msgs::PoseTwistPtr msg){
 	if (msg->pose.position.x < 0.2){
@@ -96,17 +96,35 @@ void state_callback1(const cartesian_state_msgs::PoseTwistPtr msg){
 	else if (msg->pose.position.x > 0.4){
 		f1->linear.x = -0.08;		
 	}
-	if (msg->pose.position.y < 0.2){
+
+	// if (flagx and msg->pose.position.x < 0.3){
+	// 	f->linear.x = 0;
+	// 	f->linear.y = 0.08;
+	// 	flagx = false;
+	// 	pub.publish(*f);
+	// 	return;
+	// }
+
+	if (msg->pose.position.y > 0.4){
+		f2->linear.y = -0.08;
+	}
+	else if (msg->pose.position.y < 0.3){
 		f2->linear.y = 0.08;
 	}
-	else if (msg->pose.position.y > 0.4){
-		f2->linear.y = -0.08;		
-	}
-	final_twist_construct();
 
+	// if (msg->pose.position.y < 0.2){
+	// 	f2->linear.y = 0.08;
+	// }
+	// else if (msg->pose.position.y > 0.4){
+	// 	f2->linear.y = -0.08;		
+	// }
+	desired_twist();
+	
+	final_twist.linear.x = -(msg->twist.linear.x-f->linear.x);
+	final_twist.linear.y = -(msg->twist.linear.y-f->linear.y);	
 	ros::Duration(0.2).sleep();
 	ROS_INFO("Published velocity");
-	pub.publish(*f);
+	pub.publish(final_twist);
 	update_b();
 }
 
@@ -120,6 +138,8 @@ int main(int argc, char** argv){
 	pub = n.advertise<geometry_msgs::Twist>("manos_cartesian_velocity_controller_sim/command_cart_vel", 1);
 	ros::Duration(2).sleep();
 	f->linear.x = -0.08;
+	f1->linear.x = -0.08;
+	f2->linear.y = 0.08;
 	// f.linear.y = -0.08;
 	pub.publish(*f);
 	ros::Duration(1.5).sleep();
