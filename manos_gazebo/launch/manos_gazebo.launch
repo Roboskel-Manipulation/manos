@@ -6,11 +6,14 @@
   <arg name="limited" default="false"/>
   <arg name="rviz_conf" default="$(find manos_gazebo)/config/rviz/manos.rviz"/>
   <arg name="cart_control" default="false"/>
+  <!-- <arg name="sim" default="true"/> -->
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="worlds/empty.world"/>
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gui" value="$(arg gui)"/>
+    <!-- <arg name="use_sim_time" value="$(arg sim)"/> -->
+    
   </include>
 
   <include file="$(find manos_description)/launch/ur3_pg70_upload.launch">
@@ -68,10 +71,11 @@
     <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
     <node name="arm_cartesian_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn manos_cartesian_velocity_controller_sim" respawn="false" output="screen"/>
 
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/>
 
   </group>
   
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/>
+  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/> -->
 
 
 </launch>

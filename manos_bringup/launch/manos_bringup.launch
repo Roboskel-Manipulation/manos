@@ -12,14 +12,14 @@
   </include>
 
   <!-- ur common -->
-  <include file="$(find ur_modern_driver)/launch/ur_common.launch">
+<!--   <include file="$(find ur_modern_driver)/launch/ur_common.launch">
     <arg name="robot_ip" value="$(arg robot_ip)"/>
     <arg name="min_payload"  value="$(arg min_payload)"/>
     <arg name="max_payload"  value="$(arg max_payload)"/>
     <arg name="prefix" value="$(arg prefix)" />
-  </include>
+  </include> -->
 
-<!--   <node name="ur_hardware_interface" pkg="ur_modern_driver" type="ur_driver"
+  <node name="ur_hardware_interface" pkg="ur_modern_driver" type="ur_driver"
             output="screen" >
     <param name="robot_ip_address" type="str" value="$(arg robot_ip)"/>
     <param name="min_payload" type="double" value="$(arg min_payload)"/>
@@ -27,13 +27,13 @@
     <param name="use_ros_control" type="bool" value="True"/>
     <param name="prefix" value="$(arg prefix)" />
   </node>
- -->
+
   <!-- <include file="$(find schunk_pg70)/launch/pg70_rs232_control.launch"/> -->
 <!-- 
   <rosparam file="$(find manos_bringup)/config/schunk_pg70.yaml" command="load"/>
   <node name="gripper_controller_spawner" pkg="controller_manager" type="spawner" args="gripper_controller"/>
    -->
-<!--   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
           <rosparam param="publish_frequency">200</rosparam>
   </node>
   <rosparam file="$(find manos_gazebo)/config/joint_state_controller.yaml" command="load"/>
@@ -43,6 +43,6 @@
   <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
   <node name="arm_controller_spawner" pkg="controller_manager"
       type="controller_manager" args="spawn manos_cartesian_velocity_controller"
-      respawn="false" output="screen"/> -->
+      respawn="false" output="screen"/>
 
 </launch>

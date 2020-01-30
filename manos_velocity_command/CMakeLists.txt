@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
 	rospy
 	tf
 	tf_conversions
+	keypoint_3d_matching_msgs
 )
 
 set(CMAKE_CXX_FLAGS "-O2 -O3 -std=c++11 -Wall")
@@ -43,3 +44,6 @@ target_link_libraries(velocity_main ${catkin_LIBRARIES})
 
 add_executable(sample src/sample.cpp)
 target_link_libraries(sample ${catkin_LIBRARIES})
+
+add_executable(motion_follower src/motion_follower.cpp)
+target_link_libraries(motion_follower ${catkin_LIBRARIES})

@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/PointStamped.h>
 #include <cartesian_state_msgs/PoseTwist.h>
 
 #include <vector>
@@ -14,7 +15,7 @@ geometry_msgs::TwistPtr twist2 = boost::make_shared<geometry_msgs::Twist>();
 geometry_msgs::TwistPtr f1 = boost::make_shared<geometry_msgs::Twist>();
 geometry_msgs::TwistPtr f2 = boost::make_shared<geometry_msgs::Twist>();
 geometry_msgs::TwistPtr f = boost::make_shared<geometry_msgs::Twist>();
-
+geometry_msgs::Point p;
 geometry_msgs::Twist final_twist;
 
 void twist_construct(bool& flagX, bool& flagY){
@@ -131,7 +132,7 @@ void state_callback1(const cartesian_state_msgs::PoseTwistPtr msg){
 int main(int argc, char** argv){
 	ros::init(argc, argv, "main");
 	ros::NodeHandle n;
-
+	// std::cout << p.__s_getDataType() << std::endl;
 	twist_construct(velX, velY);
 	init_b();
 

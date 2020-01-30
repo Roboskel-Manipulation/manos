@@ -7,6 +7,7 @@ Panels:
         - /TF1
         - /External Force1
         - /world_u_c x21
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 662
   - Class: rviz/Selection
@@ -62,11 +63,6 @@ Visualization Manager:
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
-        FT300_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         Link Tree Style: Links in Alphabetic Order
         base:
           Alpha: 1
@@ -145,7 +141,7 @@ Visualization Manager:
       Frame Timeout: 9999999
       Frames:
         All Enabled: false
-        FT300_link:
+        ar_marker_link:
           Value: true
         base:
           Value: false
@@ -153,11 +149,15 @@ Visualization Manager:
           Value: true
         box_link:
           Value: false
+        camera_link:
+          Value: true
+        camera_rgb_optical_frame:
+          Value: true
+        dummy_link:
+          Value: true
         ee_link:
           Value: false
         forearm_link:
-          Value: false
-        robotiq_force_torque_frame_id:
           Value: false
         shoulder_link:
           Value: false
@@ -165,8 +165,6 @@ Visualization Manager:
           Value: false
         upper_arm_link:
           Value: false
-        virtual_force_base_frame:
-          Value: true
         world:
           Value: false
         wrist_1_link:
@@ -184,6 +182,8 @@ Visualization Manager:
         world:
           box_link:
             base_link:
+              ar_marker_link:
+                {}
               base:
                 {}
               shoulder_link:
@@ -193,13 +193,9 @@ Visualization Manager:
                       wrist_2_link:
                         wrist_3_link:
                           ee_link:
-                            FT300_link:
-                              robotiq_force_torque_frame_id:
-                                {}
+                            {}
                           tool0:
                             {}
-              virtual_force_base_frame:
-                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -258,6 +254,14 @@ Visualization Manager:
       Torque Color: 204; 204; 51
       Unreliable: false
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: visualization_marker
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -286,7 +290,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.662304401397705
+      Distance: 1.9327150583267212
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
