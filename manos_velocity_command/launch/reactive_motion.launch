@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<launch>
+
+	<node pkg="manos_velocity_command" name="reactive_motion" type="motion_follower" output="screen">
+		<rosparam file="$(find manos_velocity_command)/config/sim.yaml" command="load"/>
+	</node>
+	
+</launch>
