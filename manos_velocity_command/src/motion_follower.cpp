@@ -5,18 +5,30 @@
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Point.h>
 #include <visualization_msgs/Marker.h>
-
+#include <velocity_extraction_msg/TimeArray.h>
+#include <std_msgs/Time.h>
+#include <trajectory_smoothing_msg/SmoothRWristCoordsWithRespectToBase.h>
+#include <velocity_extraction_msg/PointsStampedArray.h>
 #include <stdlib.h>
 #include <memory>
+#include <vector>
+#include <numeric>
 
 
-ros::Publisher pub, vis_human, vis_robot, pub_robot_state;
+ros::Publisher pub, vis_human, vis_robot, pub_robot_state, pub_points_human, pub_points_robot;
 ros::Time beginTime;
 ros::Time currentTime;
 
 // std::shared_ptr<cartesian_state_msgs::PoseTwist> robot_state = boost::make_shared<cartesian_state_msgs::PoseTwist>();
+std_msgs::TimePtr th = boost::make_shared<std_msgs::Time>();
+std_msgs::TimePtr tr = boost::make_shared<std_msgs::Time>();
+
+velocity_extraction_msg::PointsStampedArray human_points;
+velocity_extraction_msg::PointsStampedArray robot_points;
 
 geometry_msgs::PointPtr temp_point = boost::make_shared<geometry_msgs::Point>();
+geometry_msgs::PointStampedPtr temp_point_human = boost::make_shared<geometry_msgs::PointStamped>();
+geometry_msgs::PointStampedPtr temp_point_robot = boost::make_shared<geometry_msgs::PointStamped>();
 
 geometry_msgs::PointStampedPtr desired_robot_position = boost::make_shared<geometry_msgs::PointStamped>();
 geometry_msgs::PointStampedPtr robot_state = boost::make_shared<geometry_msgs::PointStamped>();
@@ -27,15 +39,16 @@ geometry_msgs::TwistPtr safe_vel_control = boost::make_shared<geometry_msgs::Twi
 visualization_msgs::MarkerPtr marker_human = boost::make_shared<visualization_msgs::Marker>();
 visualization_msgs::MarkerPtr marker_robot = boost::make_shared<visualization_msgs::Marker>();
 
+velocity_extraction_msg::TimeArray human_time, robot_time;
 
-
-int count = 0;
-float D=0.5; 
-bool state_flag = false, init_flag = true;
-float sleep_rate = 0.05f;
-float init_x = 0.3537, init_y = 0.2641, init_z = 0.2105;
+std::vector<ros::Duration> diff_time;
+float D, init_x, init_y, init_z, sleep_rate;
+bool init_flag = true, human_flag = false, time_pub = true;
+ros::Time human_point_time;
 
 void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::ConstPtr human_msg){
+	human_point_time = ros::Time::now();
+	human_flag = true;
 	for (short int i=0; i<human_msg->keypoints.size(); i++){
 		if (!human_msg->keypoints[i].name.compare("RWrist")){
 			marker_human->header.frame_id = "base_link";
@@ -57,33 +70,22 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 			desired_robot_position->point.y = human_msg->keypoints[i].points.point.y + 0.5;
 			desired_robot_position->point.z = human_msg->keypoints[i].points.point.z;
 			desired_robot_position->header.stamp = human_msg->keypoints[i].points.header.stamp;
-			// count += 1;
-			// if (count != 7){
-			// 	// ROS_INFO("Stil counting...");
-			// 	return;
-			// }
-			// else{
-			// 	// ROS_INFO("Ready to publish velocities");
-			// 	// desired_robot_position->point.x /= (double) count;
-			// 	// desired_robot_position->point.y /= (double) count;
-			// 	// desired_robot_position->point.z /= (double) count;
-			// 	count = 0;
-			// 	break;
-			// }
+			// th->data = ros::Time::now();
+			// tr->data = robot_state->header.stamp;
+			// human_time.times.push_back(*th);
+			// robot_time.times.push_back(*tr);
 		}
 	}
-	// ROS_INFO("Check for state flag");
 	if (!init_flag){
-		std::cout << *desired_robot_position << std::endl;
 		vel_control->linear.x = D*(desired_robot_position->point.x - robot_state->point.x);
 		vel_control->linear.y = D*(desired_robot_position->point.y - robot_state->point.y);
 		vel_control->linear.z = D*(desired_robot_position->point.z - robot_state->point.z);
 		vel_control->angular.x = 0;
 		vel_control->angular.y = 0;
 		vel_control->angular.z = 0;
-		temp_point->x = robot_state->point.x + vel_control->linear.x;
-		temp_point->y = robot_state->point.y + vel_control->linear.y;
-		temp_point->z = robot_state->point.z + vel_control->linear.z;
+		temp_point->x = robot_state->point.x;
+		temp_point->y = robot_state->point.y;
+		temp_point->z = robot_state->point.z;
 		
 		marker_robot->header.frame_id = "base_link";
 		marker_robot->type = marker_robot->LINE_STRIP;
@@ -94,36 +96,35 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 		marker_robot->scale.x = 0.01;
 		marker_robot->color.a = 1.0;
 		marker_robot->color.r = 0.0;
-		marker_robot->color.g = 1.0;
-		marker_robot->color.b = 0.0;
+		marker_robot->color.g = 0.0;
+		marker_robot->color.b = 1.0;
 		vis_robot.publish(*marker_robot);
-		
 		currentTime = ros::Time::now();
-		// ROS_INFO("Check for valid state...");
 		if (currentTime-beginTime > ros::Duration(15) and (robot_state->point.x > 0.45 or robot_state->point.y >0.45)){
-			// ROS_INFO("Published safe velocity");
 			pub.publish(safe_vel_control);
 			return;
 		}
-		if(currentTime-beginTime > ros::Duration(10)){
-			// ROS_INFO("Published motion following velocity");
-			pub.publish(*vel_control);
-			pub_robot_state.publish(*robot_state);
-			// desired_robot_position->point.x = 0;
-			// desired_robot_position->point.y = 0;
-			// desired_robot_position->point.z = 0;
-		}
-		// state_pub.publish(*robot_state);
-		ros::Duration(sleep_rate).sleep();
+		temp_point_human->point.x = desired_robot_position->point.x;
+		temp_point_human->point.y = desired_robot_position->point.y;
+		temp_point_human->point.z = desired_robot_position->point.z;
+		temp_point_human->header.stamp = human_point_time;
+		temp_point_robot->point.x = robot_state->point.x;
+		temp_point_robot->point.y = robot_state->point.y;
+		temp_point_robot->point.z = robot_state->point.z;
+		temp_point_robot->header.stamp = robot_state->header.stamp;
+		human_points.points.push_back(*temp_point_human);
+		robot_points.points.push_back(*temp_point_robot);
+		// pub_robot_state.publish(*robot_state);
+		pub.publish(*vel_control);
 	}
 }
 
 void state_callback (const cartesian_state_msgs::PoseTwist::ConstPtr state_msg){
-	state_flag=false;
 	robot_state->point.x = state_msg->pose.position.x;
 	robot_state->point.y = state_msg->pose.position.y;
 	robot_state->point.z = state_msg->pose.position.z;
-	if (abs(robot_state->point.x - init_x) > 0.001 and abs(robot_state->point.y - init_y) > 0.001 and abs(robot_state->point.z - init_z) > 0.001){
+	robot_state->header.stamp = state_msg->header.stamp;
+	if (abs(robot_state->point.x - init_x) > 0.0005 and abs(robot_state->point.y - init_y) > 0.0005 and abs(robot_state->point.z - init_z) > 0.0005){
 		if (init_flag){
 			vel_control->linear.x = D*(init_x - robot_state->point.x);
 			vel_control->linear.y = D*(init_y - robot_state->point.y);
@@ -136,9 +137,33 @@ void state_callback (const cartesian_state_msgs::PoseTwist::ConstPtr state_msg){
 	}
 	else{
 		ROS_INFO("Reached the initial point");
+		if (init_flag){
+			pub.publish(safe_vel_control);
+		}
 		init_flag = false;
 	}
-	state_flag=true;
+	if (ros::Time::now() - human_point_time > ros::Duration(1) and human_flag){
+		ROS_INFO("Published zero velocity due to the absence of the human");
+		pub.publish(safe_vel_control);
+		if (time_pub){
+			// pub_time_human.publish(human_time);
+			// ros::Duration(0.5).sleep();
+			// pub_time_robot.publish(robot_time);
+			// ros::Duration(0.5).sleep();
+			pub_points_human.publish(human_points);
+			ros::Duration(0.5).sleep();
+			pub_points_robot.publish(robot_points);
+			time_pub = false;
+		}
+		// for (short int i=0; i<human_time.times.size(); i++){
+		// 	diff_time.push_back(human_time.times[i].data-robot_time.times[i].data);
+		// }
+		// auto min_diff = std::min_element(diff_time.begin(), diff_time.end());
+		// auto max_diff = std::max_element(diff_time.begin(), diff_time.end());
+		// auto mean_diff = std::accumulate(diff_time.begin(), diff_time.end(), 0.0)/diff_time.size();
+		// std::cout << *min_diff << " " << *max_diff << std::endl;
+
+	}
 }
 
 
@@ -154,6 +179,13 @@ int main(int argc, char** argv){
 	int sim;
 	std::string output_topic, state_topic;
 	n.param("/reactive_motion/sim", sim, 1);
+	n.param("/reactive_motion/D", D, 1.0f);
+	n.param("/reactive_motion/init_x", init_x, 1.0f);
+	n.param("/reactive_motion/init_y", init_y, 1.0f);
+	n.param("/reactive_motion/init_z", init_z, 1.0f);
+	n.param("/reactive_motion/sleep_rate", sleep_rate, 1.0f);
+
+
 	if (sim){
 		output_topic = "/manos_cartesian_velocity_controller_sim/command_cart_vel";
 		state_topic = "/manos_cartesian_velocity_controller_sim/ee_state";
@@ -164,11 +196,17 @@ int main(int argc, char** argv){
 	}
 	pub = n.advertise<geometry_msgs::Twist>(output_topic, 10);
 	pub_robot_state = n.advertise<geometry_msgs::PointStamped>("/manos_cartesian_velocity_controller/robot_state", 10);
+	// pub_time_human = n.advertise<velocity_extraction_msg::TimeArray>("/time_human", 10);
+	// pub_time_robot = n.advertise<velocity_extraction_msg::TimeArray>("/time_robot", 10);
+
+	pub_points_human = n.advertise<velocity_extraction_msg::PointsStampedArray>("/points_human", 10);
+	pub_points_robot = n.advertise<velocity_extraction_msg::PointsStampedArray>("/points_robot", 10);
+
 	vis_human = n.advertise<visualization_msgs::Marker>("/visualization_marker_human", 10);
 	vis_robot = n.advertise<visualization_msgs::Marker>("/visualization_marker_robot", 10);
 	//  = n.advertise<geometry_msgs::PoseTwist>("/state_in_reactive_mode", 10);
+	
 	ros::Subscriber sub = n.subscribe(state_topic, 1, state_callback);
 	ros::Subscriber sub2 = n.subscribe("/topic_transform", 100, human_motion_callback);
-
 	ros::spin();
 }

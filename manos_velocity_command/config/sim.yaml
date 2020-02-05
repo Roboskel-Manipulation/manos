@@ -1,1 +1,24 @@
 sim: 1
+D: 3
+sleep_rate: 0.05
+
+
+# 4
+# init_x: 0.2737
+# init_y: 0.2741
+# init_z: 0.2155
+
+# 3
+# init_x: 0.2837
+# init_y: 0.2641
+# init_z: 0.2055
+
+# 2
+# init_x: 0.2637
+# init_y: 0.2541
+# init_z: 0.2155
+
+# 1
+init_x: 0.3037
+init_y: 0.2641
+init_z: 0.2105

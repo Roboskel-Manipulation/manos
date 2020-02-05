@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(manos_velocity_command)
 
+# add_definitions (-std=c++17)
+
 find_package(catkin REQUIRED COMPONENTS
 	cartesian_state_msgs
 	geometry_msgs
@@ -9,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 	tf
 	tf_conversions
 	keypoint_3d_matching_msgs
+	velocity_extraction_msg
 )
 
 set(CMAKE_CXX_FLAGS "-O2 -O3 -std=c++11 -Wall")
