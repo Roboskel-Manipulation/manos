@@ -89,8 +89,8 @@ int main(int argc, char** argv){
 	safe_vel_control->linear.y = 0;
 	safe_vel_control->linear.z = 0;
 	beginTime = ros::Time::now();
-	pub = n.advertise<geometry_msgs::Twist>("/manos_cartesian_velocity_controller/command_cart_vel", 10);
-	ros::Subscriber sub = n.subscribe("/manos_cartesian_velocity_controller/ee_state", 10, state_callback);
+	pub = n.advertise<geometry_msgs::Twist>("/manos_cartesian_velocity_controller_sim/command_cart_vel", 10);
+	ros::Subscriber sub = n.subscribe("/manos_cartesian_velocity_controller_sim/ee_state", 10, state_callback);
 	ros::Subscriber sub2 = n.subscribe("/topic_transform", 10, human_motion_callback);
 
 	ros::spin();
