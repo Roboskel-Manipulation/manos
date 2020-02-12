@@ -1,50 +1,4 @@
-#include <ros/ros.h>
-#include <geometry_msgs/Twist.h>
-#include <cartesian_state_msgs/PoseTwist.h>
-#include <keypoint_3d_matching_msgs/Keypoint3d_list.h>
-#include <geometry_msgs/PointStamped.h>
-#include <geometry_msgs/Point.h>
-#include <visualization_msgs/Marker.h>
-#include <velocity_extraction_msg/TimeArray.h>
-#include <std_msgs/Time.h>
-#include <trajectory_smoothing_msg/SmoothRWristCoordsWithRespectToBase.h>
-#include <velocity_extraction_msg/PointsStampedArray.h>
-#include <stdlib.h>
-#include <memory>
-#include <vector>
-#include <numeric>
-
-
-ros::Publisher pub, vis_human, vis_robot, pub_robot_state, pub_points_human, pub_points_robot;
-ros::Time beginTime;
-ros::Time currentTime;
-
-// std::shared_ptr<cartesian_state_msgs::PoseTwist> robot_state = boost::make_shared<cartesian_state_msgs::PoseTwist>();
-std_msgs::TimePtr th = boost::make_shared<std_msgs::Time>();
-std_msgs::TimePtr tr = boost::make_shared<std_msgs::Time>();
-
-velocity_extraction_msg::PointsStampedArray human_points;
-velocity_extraction_msg::PointsStampedArray robot_points;
-
-geometry_msgs::PointPtr temp_point = boost::make_shared<geometry_msgs::Point>();
-geometry_msgs::PointStampedPtr temp_point_human = boost::make_shared<geometry_msgs::PointStamped>();
-geometry_msgs::PointStampedPtr temp_point_robot = boost::make_shared<geometry_msgs::PointStamped>();
-
-geometry_msgs::PointStampedPtr desired_robot_position = boost::make_shared<geometry_msgs::PointStamped>();
-geometry_msgs::PointStampedPtr robot_state = boost::make_shared<geometry_msgs::PointStamped>();
-
-geometry_msgs::TwistPtr vel_control = boost::make_shared<geometry_msgs::Twist>();
-geometry_msgs::TwistPtr safe_vel_control = boost::make_shared<geometry_msgs::Twist>();
-
-visualization_msgs::MarkerPtr marker_human = boost::make_shared<visualization_msgs::Marker>();
-visualization_msgs::MarkerPtr marker_robot = boost::make_shared<visualization_msgs::Marker>();
-
-velocity_extraction_msg::TimeArray human_time, robot_time;
-
-std::vector<ros::Duration> diff_time;
-float D, init_x, init_y, init_z, sleep_rate;
-bool init_flag = true, human_flag = false, time_pub = true;
-ros::Time human_point_time;
+#include <motion_follower.hpp>
 
 void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::ConstPtr human_msg){
 	human_point_time = ros::Time::now();
@@ -70,6 +24,15 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 			desired_robot_position->point.y = human_msg->keypoints[i].points.point.y + 0.5;
 			desired_robot_position->point.z = human_msg->keypoints[i].points.point.z;
 			desired_robot_position->header.stamp = human_msg->keypoints[i].points.header.stamp;
+			if (openpose_second){
+				v2->at(0) = desired_robot_position->point.x;
+				v2->at(1) = desired_robot_position->point.y;
+				v2->at(2) = desired_robot_position->point.z;
+				D = init_gain*euclidean_distance(v1, v2);
+				// ROS_INFO("The gain D is: %lf", D);
+			}
+
+
 			// th->data = ros::Time::now();
 			// tr->data = robot_state->header.stamp;
 			// human_time.times.push_back(*th);
@@ -77,9 +40,10 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 		}
 	}
 	if (!init_flag){
-		vel_control->linear.x = D*(desired_robot_position->point.x - robot_state->point.x);
-		vel_control->linear.y = D*(desired_robot_position->point.y - robot_state->point.y);
-		vel_control->linear.z = D*(desired_robot_position->point.z - robot_state->point.z);
+		control_time = (long double)(human_point_time-temp_point_human->header.stamp).toSec();
+		vel_control->linear.x =  D*(desired_robot_position->point.x - robot_state->point.x);
+		vel_control->linear.y =  D*(desired_robot_position->point.y - robot_state->point.y);
+		vel_control->linear.z =  D*(desired_robot_position->point.z - robot_state->point.z);
 		vel_control->angular.x = 0;
 		vel_control->angular.y = 0;
 		vel_control->angular.z = 0;
@@ -116,6 +80,11 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 		robot_points.points.push_back(*temp_point_robot);
 		// pub_robot_state.publish(*robot_state);
 		pub.publish(*vel_control);
+
+		v1->at(0) = desired_robot_position->point.x;
+		v1->at(1) = desired_robot_position->point.y;
+		v1->at(2) = desired_robot_position->point.z;
+		openpose_second = true;
 	}
 }
 
@@ -178,13 +147,19 @@ int main(int argc, char** argv){
 
 	int sim;
 	std::string output_topic, state_topic;
+	v1->resize(3);
+	v2->resize(3);
+
+
 	n.param("/reactive_motion/sim", sim, 1);
-	n.param("/reactive_motion/D", D, 1.0f);
+	// n.param("/reactive_motion/D", D, 1.0f);
+
+	n.param("/reactive_motion/init_gain", init_gain, 1.0f);
 	n.param("/reactive_motion/init_x", init_x, 1.0f);
 	n.param("/reactive_motion/init_y", init_y, 1.0f);
 	n.param("/reactive_motion/init_z", init_z, 1.0f);
 	n.param("/reactive_motion/sleep_rate", sleep_rate, 1.0f);
-
+	std::cout << init_gain << std::endl;
 
 	if (sim){
 		output_topic = "/manos_cartesian_velocity_controller_sim/command_cart_vel";

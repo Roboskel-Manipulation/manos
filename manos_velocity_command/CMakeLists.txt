@@ -45,5 +45,5 @@ target_link_libraries(velocity_main ${catkin_LIBRARIES})
 add_executable(sample src/sample.cpp)
 target_link_libraries(sample ${catkin_LIBRARIES})
 
-add_executable(motion_follower src/motion_follower.cpp)
+add_executable(motion_follower src/motion_follower.cpp src/euclidean_distance.cpp)
 target_link_libraries(motion_follower ${catkin_LIBRARIES})

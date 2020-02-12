@@ -4,10 +4,8 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /TF1
-        - /External Force1
-        - /world_u_c x21
         - /Marker1
+        - /Marker2
       Splitter Ratio: 0.5
     Tree Height: 662
   - Class: rviz/Selection
@@ -141,20 +139,12 @@ Visualization Manager:
       Frame Timeout: 9999999
       Frames:
         All Enabled: false
-        ar_marker_link:
-          Value: true
         base:
           Value: false
         base_link:
           Value: true
         box_link:
           Value: false
-        camera_link:
-          Value: true
-        camera_rgb_optical_frame:
-          Value: true
-        dummy_link:
-          Value: true
         ee_link:
           Value: false
         forearm_link:
@@ -182,8 +172,6 @@ Visualization Manager:
         world:
           box_link:
             base_link:
-              ar_marker_link:
-                {}
               base:
                 {}
               shoulder_link:
@@ -256,7 +244,15 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: visualization_marker
+      Marker Topic: /visualization_marker_human
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker_robot
       Name: Marker
       Namespaces:
         {}
