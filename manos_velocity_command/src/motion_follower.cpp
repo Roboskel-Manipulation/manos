@@ -29,6 +29,7 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 				v2->at(1) = desired_robot_position->point.y;
 				v2->at(2) = desired_robot_position->point.z;
 				D = init_gain*euclidean_distance(v1, v2);
+				D=5;
 				// ROS_INFO("The gain D is: %lf", D);
 			}
 
