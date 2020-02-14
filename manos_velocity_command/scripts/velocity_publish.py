@@ -11,12 +11,13 @@ pub = None
 vis_pub_human = None
 vis_pub_robot = None
 flag = False
+vel_flag = True
 init_point_flag = False
 state = PoseTwist()
 init_point = Point()
 
 def callback(msg):
-	global pub, init_point_flag, vis_pub_robot
+	global pub, init_point_flag, vis_pub_robot, vel_flag
 	while (not init_point_flag):
 		pass
 	marker = Marker()
@@ -52,8 +53,10 @@ def callback(msg):
 		vel.linear.z = msg.twistArray[i].twist.linear.z
 		# vel.header.stamp = rospy.Time.now()
 		pub.publish(vel)
+		if i != len(msg.twistArray):
+			rospy.sleep(0.05)
 		print "Published the velocity"
-		rospy.sleep(0.05)
+		# rospy.sleep(0.05)
 	vel = Twist()
 	vel.linear.x = 0
 	vel.linear.y = 0
@@ -82,8 +85,9 @@ def traj_callback(msg):
 	print "Published the marker"
 	vis_pub_human.publish(marker)
 	init_point = msg.points[0]
-	init_point.x += 0.6
-	init_point.y += 0.6
+	init_point.x += 0.5
+	init_point.y += 0.3
+	init_point.z += 0.02
 	print init_point
 	flag = True
 
@@ -97,15 +101,15 @@ def state_callback(msg):
 		# print init_point
 		# print "Printed the vel"
 		# print msg.pose
-		# print init_vel
+		print init_vel
 		pub.publish(init_vel)
-		if (abs(init_vel.linear.x) <= 0.003 and abs(init_vel.linear.y) <= 0.003 and abs(init_vel.linear.z) <= 0.003):
+		if (abs(init_vel.linear.x) <= 0.003 and abs(init_vel.linear.y) <= 0.003 and abs(init_vel.linear.z) <= 0.004):
 			print "Reached initial point"
 			init_vel.linear.x = 0
 			init_vel.linear.y = 0
 			init_vel.linear.z = 0
 			pub.publish(init_vel)
-			rospy.sleep(10)
+			# rospy.sleep(10)
 			init_point_flag = True
 			flag = False
 def main():
