@@ -9,7 +9,9 @@ find_package(catkin REQUIRED COMPONENTS
 	tf
 	tf_conversions
 	keypoint_3d_matching_msgs
-)
+	velocity_extraction_msg
+	trajectory_smoothing_msg
+	)
 
 set(CMAKE_CXX_FLAGS "-O2 -O3 -std=c++11 -Wall")
 
