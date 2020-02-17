@@ -48,7 +48,7 @@
     <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
  </joint>
 
-<link name="FT300_link">
+<!-- <link name="FT300_link">
     <visual>
       <geometry>
         <cylinder length="0.04" radius="0.035"/>
@@ -67,7 +67,7 @@
     <origin xyz="0.02 0 0" rpy="0 1.57 0" />
     <parent link="ee_link" />
     <child link="FT300_link" />
-  </joint>
+  </joint> -->
 
 
  <!--  <link name="gripper_link">

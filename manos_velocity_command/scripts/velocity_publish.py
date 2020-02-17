@@ -82,8 +82,8 @@ def traj_callback(msg):
 	print "Published the marker"
 	vis_pub_human.publish(marker)
 	init_point = msg.points[0]
-	init_point.x = abs(init_point.x)
-	init_point.y = abs(init_point.y)
+	init_point.x = init_point.x + 0.5
+	init_point.y = init_point.y + 0.3
 	print init_point
 	flag = True
 
@@ -91,9 +91,9 @@ def state_callback(msg):
 	global init_point, pub, init_point_flag, vis_pub, flag
 	if flag:
 		init_vel = Twist()
-		init_vel.linear.x = 3*(init_point.x - msg.pose.position.x)
-		init_vel.linear.y = 3*(init_point.y - msg.pose.position.y)
-		init_vel.linear.z = 3*(init_point.z - msg.pose.position.z)
+		init_vel.linear.x = (init_point.x - msg.pose.position.x)
+		init_vel.linear.y = (init_point.y - msg.pose.position.y)
+		init_vel.linear.z = (init_point.z - msg.pose.position.z)
 		# print init_point
 		# print "Printed the vel"
 		# print msg.pose
