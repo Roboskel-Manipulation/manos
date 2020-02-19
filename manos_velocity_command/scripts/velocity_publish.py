@@ -82,8 +82,9 @@ def traj_callback(msg):
 	print "Published the marker"
 	vis_pub_human.publish(marker)
 	init_point = msg.points[0]
-	init_point.x = init_point.x + 0.5
-	init_point.y = init_point.y + 0.3
+	init_point.x = init_point.x + 0.3
+	init_point.y = init_point.y + 0.1
+	init_point.z -= 0.2
 	print init_point
 	flag = True
 
