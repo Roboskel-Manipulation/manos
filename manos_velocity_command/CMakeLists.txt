@@ -49,3 +49,6 @@ target_link_libraries(sample ${catkin_LIBRARIES})
 
 add_executable(motion_follower src/motion_follower.cpp src/euclidean_distance.cpp)
 target_link_libraries(motion_follower ${catkin_LIBRARIES})
+
+add_executable (motion_replication src/motion_replication)
+target_link_libraries (motion_replication ${catkin_LIBRARIES})
