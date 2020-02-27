@@ -1,10 +1,17 @@
 #include <motion_follower.hpp>
 
+
+
+int count=0;
 void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::ConstPtr human_msg){
 	human_point_time = ros::Time::now();
 	human_flag = true;
+	count++;
+	std::cout << count << std::endl;
 	for (short int i=0; i<human_msg->keypoints.size(); i++){
 		if (!human_msg->keypoints[i].name.compare("RWrist")){
+			if (human_msg->keypoints[i].points.point.x == 0 and human_msg->keypoints[i].points.point.y == 0 and human_msg->keypoints[i].points.point.z == 0)
+				return;
 			marker_human->header.frame_id = "base_link";
 			marker_human->type = marker_human->LINE_STRIP;
 			marker_human->action = marker_human->ADD;
@@ -24,13 +31,13 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 			desired_robot_position->point.y = human_msg->keypoints[i].points.point.y + 0.5;
 			desired_robot_position->point.z = human_msg->keypoints[i].points.point.z;
 			desired_robot_position->header.stamp = human_msg->keypoints[i].points.header.stamp;
-			if (openpose_second){
-				v2->at(0) = desired_robot_position->point.x;
-				v2->at(1) = desired_robot_position->point.y;
-				v2->at(2) = desired_robot_position->point.z;
-				D = init_gain*euclidean_distance(v1, v2);
-				// ROS_INFO("The gain D is: %lf", D);
-			}
+			// if (openpose_second){
+			// 	v2->at(0) = desired_robot_position->point.x;
+			// 	v2->at(1) = desired_robot_position->point.y;
+			// 	v2->at(2) = desired_robot_position->point.z;
+			// 	D = init_gain*euclidean_distance(v1, v2);
+			// 	// ROS_INFO("The gain D is: %lf", D);
+			// }
 
 
 			// th->data = ros::Time::now();
@@ -39,11 +46,38 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 			// robot_time.times.push_back(*tr);
 		}
 	}
-	if (!init_flag){
+	// ros::Duration(0.5).sleep();
+}
+
+void state_callback (const cartesian_state_msgs::PoseTwist::ConstPtr state_msg){
+	robot_state->point.x = state_msg->pose.position.x;
+	robot_state->point.y = state_msg->pose.position.y;
+	robot_state->point.z = state_msg->pose.position.z;
+	robot_state->header.stamp = state_msg->header.stamp;
+	if (abs(robot_state->point.x - init_x) > 0.0005 and abs(robot_state->point.y - init_y) > 0.0005 and abs(robot_state->point.z - init_z) > 0.0005){
+		if (init_flag){
+			vel_control->linear.x = 3*(init_x - robot_state->point.x);
+			vel_control->linear.y = 3*(init_y - robot_state->point.y);
+			vel_control->linear.z = 3*(init_z - robot_state->point.z);
+			vel_control->angular.x = 0;
+			vel_control->angular.y = 0;
+			vel_control->angular.z = 0;
+			pub.publish(*vel_control);
+		}
+	}
+	else{
+		if (init_flag){
+			ROS_INFO("Reached the initial point");
+			pub.publish(safe_vel_control);
+		}
+		init_flag = false;
+	}
+
+	if (!init_flag and human_flag){
 		control_time = (long double)(human_point_time-temp_point_human->header.stamp).toSec();
-		vel_control->linear.x =  D*(desired_robot_position->point.x - robot_state->point.x);
-		vel_control->linear.y =  D*(desired_robot_position->point.y - robot_state->point.y);
-		vel_control->linear.z =  D*(desired_robot_position->point.z - robot_state->point.z);
+		vel_control->linear.x =  (desired_robot_position->point.x - robot_state->point.x)/D;
+		vel_control->linear.y =  (desired_robot_position->point.y - robot_state->point.y)/D;
+		vel_control->linear.z =  (desired_robot_position->point.z - robot_state->point.z)/D;
 		vel_control->angular.x = 0;
 		vel_control->angular.y = 0;
 		vel_control->angular.z = 0;
@@ -78,7 +112,7 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 		temp_point_robot->header.stamp = robot_state->header.stamp;
 		human_points.points.push_back(*temp_point_human);
 		robot_points.points.push_back(*temp_point_robot);
-		// pub_robot_state.publish(*robot_state);
+		pub_robot_state.publish(*robot_state);
 		pub.publish(*vel_control);
 
 		v1->at(0) = desired_robot_position->point.x;
@@ -86,31 +120,8 @@ void human_motion_callback(const keypoint_3d_matching_msgs::Keypoint3d_list::Con
 		v1->at(2) = desired_robot_position->point.z;
 		openpose_second = true;
 	}
-}
 
-void state_callback (const cartesian_state_msgs::PoseTwist::ConstPtr state_msg){
-	robot_state->point.x = state_msg->pose.position.x;
-	robot_state->point.y = state_msg->pose.position.y;
-	robot_state->point.z = state_msg->pose.position.z;
-	robot_state->header.stamp = state_msg->header.stamp;
-	if (abs(robot_state->point.x - init_x) > 0.0005 and abs(robot_state->point.y - init_y) > 0.0005 and abs(robot_state->point.z - init_z) > 0.0005){
-		if (init_flag){
-			vel_control->linear.x = D*(init_x - robot_state->point.x);
-			vel_control->linear.y = D*(init_y - robot_state->point.y);
-			vel_control->linear.z = D*(init_z - robot_state->point.z);
-			vel_control->angular.x = 0;
-			vel_control->angular.y = 0;
-			vel_control->angular.z = 0;
-			pub.publish(*vel_control);
-		}
-	}
-	else{
-		ROS_INFO("Reached the initial point");
-		if (init_flag){
-			pub.publish(safe_vel_control);
-		}
-		init_flag = false;
-	}
+
 	if (ros::Time::now() - human_point_time > ros::Duration(1) and human_flag){
 		ROS_INFO("Published zero velocity due to the absence of the human");
 		pub.publish(safe_vel_control);
@@ -119,9 +130,9 @@ void state_callback (const cartesian_state_msgs::PoseTwist::ConstPtr state_msg){
 			// ros::Duration(0.5).sleep();
 			// pub_time_robot.publish(robot_time);
 			// ros::Duration(0.5).sleep();
-			pub_points_human.publish(human_points);
-			ros::Duration(0.5).sleep();
-			pub_points_robot.publish(robot_points);
+			// pub_points_human.publish(human_points);
+			// ros::Duration(0.5).sleep();
+			// pub_points_robot.publish(robot_points);
 			time_pub = false;
 		}
 		// for (short int i=0; i<human_time.times.size(); i++){
@@ -152,7 +163,7 @@ int main(int argc, char** argv){
 
 
 	n.param("/reactive_motion/sim", sim, 1);
-	// n.param("/reactive_motion/D", D, 1.0f);
+	n.param("/reactive_motion/D", D, 1.0f);
 
 	n.param("/reactive_motion/init_gain", init_gain, 1.0f);
 	n.param("/reactive_motion/init_x", init_x, 1.0f);
@@ -170,7 +181,7 @@ int main(int argc, char** argv){
 		state_topic = "/manos_cartesian_velocity_controller/ee_state";
 	}
 	pub = n.advertise<geometry_msgs::Twist>(output_topic, 10);
-	pub_robot_state = n.advertise<geometry_msgs::PointStamped>("/manos_cartesian_velocity_controller/robot_state", 10);
+	pub_robot_state = n.advertise<geometry_msgs::PointStamped>("/manos_cartesian_velocity_controller_sim/robot_state", 10);
 	// pub_time_human = n.advertise<velocity_extraction_msg::TimeArray>("/time_human", 10);
 	// pub_time_robot = n.advertise<velocity_extraction_msg::TimeArray>("/time_robot", 10);
 

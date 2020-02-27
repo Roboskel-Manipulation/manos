@@ -1,12 +1,12 @@
 sim: 1
-D: 3
+D: 0.13
 sleep_rate: 0.05
-init_gain: 400
+init_gain: 100
 
 # 4
-init_x: 0.2737
-init_y: 0.2741
-init_z: 0.2155
+init_x: 0.311
+init_y: 0.148
+init_z: 0.052
 
 # 3
 # init_x: 0.2837

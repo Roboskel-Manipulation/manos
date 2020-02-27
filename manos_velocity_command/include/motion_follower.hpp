@@ -47,7 +47,7 @@ static std::vector<ros::Duration> diff_time;
 static std::shared_ptr<std::vector<double>> v1 = std::make_shared<std::vector<double>>();
 static std::shared_ptr<std::vector<double>> v2 = std::make_shared<std::vector<double>>();
 
-static float D=3, init_x, init_y, init_z, sleep_rate, init_gain;
+static float D, init_x, init_y, init_z, sleep_rate, init_gain;
 static bool init_flag = true, human_flag = false, time_pub = true, openpose_second=false;
 static ros::Time human_point_time;
 static double control_time;
