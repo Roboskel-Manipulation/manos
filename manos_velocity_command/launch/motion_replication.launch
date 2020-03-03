@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<launch>
+	<node name="motion_replication" type="motion_replication" pkg="manos_velocity_command" output="screen" respawn="false">
+		<rosparam file="$(find manos_velocity_command)/config/data.yaml" command="load"/>
+	</node>
+</launch>

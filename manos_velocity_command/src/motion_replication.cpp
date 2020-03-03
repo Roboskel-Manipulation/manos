@@ -18,7 +18,7 @@ geometry_msgs::TwistPtr zero_vel = boost::make_shared<geometry_msgs::Twist>();
 
 trajectory_smoothing_msg::SmoothRWristCoordsWithRespectToBase points;
 
-float dt=0.2, Dt=0.13;
+float dt, Dt, xOffset, yOffset, zOffset;
 bool flag = false, init_flag = false;
 
 
@@ -32,9 +32,9 @@ void signal_handler(int sig){
 void vel_callback (trajectory_smoothing_msg::SmoothRWristCoordsWithRespectToBase data){
 	ROS_INFO("Recieved the points of the trajectory");
 	for (short int i=0; i<data.points.size(); i++){
-		temp_point->x = data.points[i].x + 0.5;
-		temp_point->y = data.points[i].y + 0.5;
-		temp_point->z = data.points[i].z + 0.05;
+		temp_point->x = data.points[i].x + xOffset;
+		temp_point->y = data.points[i].y + yOffset;
+		temp_point->z = data.points[i].z + zOffset;
 		
 		points.points.push_back(*temp_point);
 	}
@@ -82,6 +82,13 @@ int main(int argc, char**argv){
 	ros::AsyncSpinner spinner(2);
 	spinner.start();
 	signal(SIGINT,	signal_handler);
+
+	nh.param("motion_replication/xOffset", xOffset, 0.0f);
+	nh.param("motion_replication/yOffset", yOffset, 0.0f);
+	nh.param("motion_replication/zOffset", zOffset, 0.0f);
+	nh.param("motion_replication/dt", dt, 0.0f);
+	nh.param("motion_replication/Dt", Dt, 0.0f);
+
 
 	zero_vel->linear.x = 0;
 	zero_vel->linear.y = 0;
