@@ -1,6 +1,7 @@
-xOffset: 0.6
+xOffset: 0.58
 yOffset: 0.4
 zOffset: 0
-dt: 0.118
-init_gain: 40
-Dt: 0.5
+dt: 0.05
+init_gain: 20
+Dt: 20
+lim: 0.4

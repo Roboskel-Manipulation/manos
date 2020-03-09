@@ -13,6 +13,8 @@ ros::Publisher vel_pub, pos_pub;
 ros::Subscriber state_sub, vel_sub;
 
 geometry_msgs::PointPtr ee_position = boost::make_shared<geometry_msgs::Point>();
+geometry_msgs::PointPtr last_ee_position = boost::make_shared<geometry_msgs::Point>();
+
 geometry_msgs::PointPtr temp_point = boost::make_shared<geometry_msgs::Point>();
 
 geometry_msgs::TwistPtr vel = boost::make_shared<geometry_msgs::Twist>();
@@ -24,11 +26,15 @@ std::shared_ptr<std::vector<double>> v1 = std::make_shared<std::vector<double>>(
 std::shared_ptr<std::vector<double>> v2 = std::make_shared<std::vector<double>>();
 
 
-float dt, init_gain, Dt, xOffset, yOffset, zOffset;
+float lim, dt, init_gain, Dt, xOffset, yOffset, zOffset;
 bool flag = false, init_flag = false;
 bool final_flag = false;
+double dis = 0.0, dis_init = 0.0;
+int count = 0;
 
 void signal_handler(int sig){
+	ROS_INFO("The total distance of the initial trajectory was %f", dis_init);
+	ROS_INFO("The total distance of the executed ee trajectory was %f", dis);
 	std::cout << "Recieved signal " << sig << std::endl;
 	std::cout << "Gonna exit..." << std::endl;
 	exit (-1);
@@ -45,6 +51,10 @@ double euclidean_distance (std::shared_ptr<std::vector<double>> v1, std::shared_
 
 
 void vel_callback (trajectory_smoothing_msg::SmoothRWristCoordsWithRespectToBase data){
+
+	for (short int i=0; i < data.points.size()-1; i++){
+		dis_init += sqrt(pow(data.points[i].x - data.points[i+1].x, 2) + pow(data.points[i].y - data.points[i+1].y, 2));
+	}
 	ROS_INFO("Recieved the points of the trajectory");
 	for (short int i=0; i<data.points.size(); i++){
 		temp_point->x = data.points[i].x + xOffset;
@@ -71,33 +81,38 @@ void vel_callback (trajectory_smoothing_msg::SmoothRWristCoordsWithRespectToBase
 	if (init_flag){
 		ros::Duration(0.5).sleep();
 		for (short int i=1; i<points.points.size(); i++){
-			v1->at(0) = points.points[i-1].x;
-			v1->at(1) = points.points[i-1].y;
-			v1->at(2) = points.points[i-1].z;
-			v2->at(0) = points.points[i].x;
-			v2->at(1) = points.points[i].y;
-			v2->at(2) = points.points[i].z;
+			// v1->at(0) = points.points[i-1].x;
+			// v1->at(1) = points.points[i-1].y;
+			// v1->at(2) = points.points[i-1].z;
+			// v2->at(0) = points.points[i].x;
+			// v2->at(1) = points.points[i].y;
+			// v2->at(2) = points.points[i].z;
 			// Dt = init_gain*euclidean_distance(v1, v2);
 			// if (Dt == 0){
 			// 	Dt = 1;
 			// }
 			std::cout << Dt << std::endl;
-			vel->linear.x = (points.points[i].x - ee_position->x)/Dt;
-			vel->linear.y = (points.points[i].y - ee_position->y)/Dt;
-			vel->linear.z = (points.points[i].z - ee_position->z)/Dt;
+			vel->linear.x = Dt*(points.points[i].x - ee_position->x);
+			vel->linear.y = Dt*(points.points[i].y - ee_position->y);
+			vel->linear.z = Dt*(points.points[i].z - ee_position->z);
 			vel_pub.publish(vel);
+			// std::cout << sqrt(pow(ee_position->x,2) + pow(ee_position->y, 2)) << std::endl;
 			if (i == points.points.size()-1){
 				while (not final_flag){
 					// std::cout << *ee_position << std::endl;
-					vel->linear.x = (points.points[i].x - ee_position->x);
-					vel->linear.y = (points.points[i].y - ee_position->y);
-					vel->linear.z = (points.points[i].z - ee_position->z);
+					vel->linear.x = Dt*(points.points[i].x - ee_position->x);
+					vel->linear.y = Dt*(points.points[i].y - ee_position->y);
+					vel->linear.z = Dt*(points.points[i].z - ee_position->z);
 					vel_pub.publish(vel);
 					ros::Duration(0.2).sleep();
+					final_flag = true;
 					if (abs(points.points[i].x - ee_position->x) < 0.005 and abs(points.points[i].y - ee_position->y) < 0.005 and abs(points.points[i].z - ee_position->z) < 0.005){
 						ROS_INFO("Reached final point");
 						final_flag = true;
-					}		
+					}
+					if (sqrt(pow(ee_position->x,2) + pow(ee_position->y, 2)) >= lim){
+						final_flag = true;
+					}
 				}
 			}
 			else{
@@ -114,8 +129,14 @@ void state_callback (const cartesian_state_msgs::PoseTwist::ConstPtr msg){
 	ee_position->x = msg->pose.position.x;
 	ee_position->y = msg->pose.position.y;
 	ee_position->z = msg->pose.position.z;
-	if (init_flag)	
+	if (init_flag){
 		pos_pub.publish(*ee_position);
+		count += 1;
+		if (count > 1){
+			dis += sqrt(pow(ee_position->x - last_ee_position->x, 2) + pow(ee_position->y - last_ee_position->y, 2));
+		}
+		*last_ee_position = *ee_position;
+	}
 }
 
 
@@ -131,6 +152,7 @@ int main(int argc, char**argv){
 	nh.param("motion_replication/zOffset", zOffset, 0.0f);
 	nh.param("motion_replication/dt", dt, 0.0f);
 	nh.param("motion_replication/Dt", Dt, 0.0f);
+	nh.param("motion_replication/lim", lim, 0.0f);
 
 	nh.param("motion_replication/init_gain", init_gain, 0.0f);
 	v1->resize(3);

@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+  name="ur3_pg70">
+<!-- schunk_pg70 -->
+  <!-- <xacro:include filename="$(find manos_description)/urdf/grippers/schunk_pg70.urdf.xacro"/> -->
+<!-- ur3 -->
+<property name="prefix" value="" />
+  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" params="$(prefix) hardware_interface/VelocityJointInterface"/>
+  
+    <xacro:ur3_robot prefix="" joint_limited="true"
+    shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
+    shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}"
+    elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}"
+    wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}"
+    wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}"
+    wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}"
+  />
+
+   <link name="world" />
+
+  <link name="box_link">
+    <visual>
+      <geometry>
+        <box size="1.0 1.0 0.86"/>
+      </geometry>
+    </visual>
+    <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="100"/>
+        <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+    </inertial>
+    <collision>
+      <geometry>
+        <box size="1.0 1.0 0.86"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "box_link" />
+    <origin xyz="0.0 0.0 0.43" rpy="0.0 0.0 0.0" />
+  </joint>
+
+   <joint name="box_joint" type="fixed">
+    <parent link="box_link"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
+ </joint>
+
+<!-- <link name="FT300_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.04" radius="0.035"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="0.04" radius="0.035"/>
+      </geometry>
+    </collision>
+   </link>
+
+  <joint name="FT300_joint" type="fixed">
+    <origin xyz="0.02 0 0" rpy="0 1.57 0" />
+    <parent link="ee_link" />
+    <child link="FT300_link" />
+  </joint> -->
+
+
+ <!--  <link name="gripper_link">
+    <visual>
+      <geometry>
+        <box size="0.005 0.113 0.08 "/>
+      </geometry>
+      <material name="silver">
+        <color rgba="0.5 0.5 0.5 1" />
+      </material>
+    </visual>
+    <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="0.001"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+    </inertial>
+    <collision>
+      <geometry>
+        <box size="0.005 0.113 0.08 "/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="gripper_joint" type="fixed">
+    <parent link="ee_link"/>
+    <child link="gripper_link"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+ </joint> -->
+
+  <!-- GRIPPER -->
+<!--   <xacro:schunk_pg70 name="pg70" parent="gripper_link">
+    <origin xyz="0.0095 0 0" rpy="${pi} -${pi/2} 0" />
+  </xacro:schunk_pg70>
+ -->
+  <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/</robotNamespace>
+        <!-- <robotSimType>hardware_interface/VelocityJointInterface</robotSimType> -->
+      </plugin>
+  </gazebo>
+
+</robot>
+

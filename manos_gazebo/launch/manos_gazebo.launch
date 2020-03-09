@@ -18,6 +18,7 @@
 
   <include file="$(find manos_description)/launch/ur3_pg70_upload.launch">
     <arg name="limited" value="$(arg limited)"/>
+    <arg name="cart_control" value="$(arg cart_control)"/>
   </include>
 
 
