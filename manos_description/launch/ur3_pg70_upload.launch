@@ -2,12 +2,16 @@
 <launch>
     <arg name="limited" default="false"/>
     <arg name="cart_control" default="false"/>
-    <!-- 
-    <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro -inorder '$(find manos_description)/urdf/ur3_pg70.urdf.xacro'" />
-    <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro -inorder '$(find manos_description)/urdf/ur3_pg70_limited.urdf.xacro'" />
-     -->
-	
-	<param unless="$(arg cart_control)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find manos_description)/urdf/ur3_pg70_limited_moveit.urdf.xacro'" />
-    <param if="$(arg cart_control)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find manos_description)/urdf/ur3_pg70_limited_control.urdf.xacro'" />
+
+    
+    <group unless="$(arg cart_control)">
+	    <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find manos_description)/urdf/ur3_pg70.urdf.xacro'" />
+	    <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find manos_description)/urdf/ur3_pg70_limited.urdf.xacro'" />
+    </group>
+
+
+	<group if="$(arg cart_control)">
+	    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find manos_description)/urdf/ur3_pg70_limited_control.urdf.xacro'" />
+	</group>
 
 </launch>

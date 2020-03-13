@@ -5,7 +5,7 @@
   <!-- <xacro:include filename="$(find manos_description)/urdf/grippers/schunk_pg70.urdf.xacro"/> -->
 <!-- ur3 -->
 <property name="prefix" value="" />
-  <xacro:include filename="$(find ur_description)/urdf/ur3_control.urdf.xacro" params="$(prefix) hardware_interface/VelocityJointInterface"/>
+  <xacro:include filename="$(find manos_description)/urdf/ur3_control.urdf.xacro" params="$(prefix) hardware_interface/VelocityJointInterface"/>
   
     <xacro:ur3_robot prefix="" joint_limited="true"
     shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
@@ -48,27 +48,6 @@
     <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
  </joint>
 
-<!-- <link name="FT300_link">
-    <visual>
-      <geometry>
-        <cylinder length="0.04" radius="0.035"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-
-    <collision>
-      <geometry>
-        <cylinder length="0.04" radius="0.035"/>
-      </geometry>
-    </collision>
-   </link>
-
-  <joint name="FT300_joint" type="fixed">
-    <origin xyz="0.02 0 0" rpy="0 1.57 0" />
-    <parent link="ee_link" />
-    <child link="FT300_link" />
-  </joint> -->
-
 
  <!--  <link name="gripper_link">
     <visual>
@@ -105,7 +84,8 @@
   <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
         <robotNamespace>/</robotNamespace>
-        <!-- <robotSimType>hardware_interface/VelocityJointInterface</robotSimType> -->
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <legacyModeNS>true</legacyModeNS>
       </plugin>
   </gazebo>
 
