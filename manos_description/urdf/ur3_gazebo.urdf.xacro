@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+       name="ur3" >
+
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/VelocityJointInterface"/>
+
+
+  <!-- ur3 -->
+  <xacro:include filename="$(find manos_description)/urdf/ur3_control.urdf.xacro" params="$(prefix) hardware_interface/VelocityJointInterface"/>
+
+  <!-- arm -->
+  <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur3_default.yaml"/>
+  <xacro:ur3_robot prefix="" joint_limited="false"
+    transmission_hw_interface="$(arg transmission_hw_interface)"
+  />
+
+   <link name="world" />
+
+  <link name="box_link">
+    <visual>
+      <geometry>
+        <box size="1.0 1.0 0.86"/>
+      </geometry>
+    </visual>
+    <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="100"/>
+        <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+    </inertial>
+    <collision>
+      <geometry>
+        <box size="1.0 1.0 0.86"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "box_link" />
+    <origin xyz="0.0 0.0 0.43" rpy="0.0 0.0 0.0" />
+  </joint>
+
+   <joint name="box_joint" type="fixed">
+    <parent link="box_link"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
+ </joint>
+
+  <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        <legacyModeNS>true</legacyModeNS>
+      </plugin>
+  </gazebo>
+</robot>

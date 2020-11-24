@@ -6,6 +6,8 @@
   <arg name="min_payload"  default="0.0"/>
   <arg name="max_payload"  default="3.0"/>
   <arg name="prefix" default="" />
+  <arg name="jog_arm" default="false" />
+  <arg name="rviz_conf" default="/home/ttsitos/catkin_ws/src/manos/manos_bringup/config/manos_DI.rviz"/>
 
   <include file="$(find manos_description)/launch/ur3_pg70_upload.launch">
     <arg name="limited" value="$(arg limited)"/>
@@ -33,16 +35,40 @@
   <rosparam file="$(find manos_bringup)/config/schunk_pg70.yaml" command="load"/>
   <node name="gripper_controller_spawner" pkg="controller_manager" type="spawner" args="gripper_controller"/>
    -->
+
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
-          <rosparam param="publish_frequency">200</rosparam>
+    <rosparam param="publish_frequency">200</rosparam>
   </node>
-  <rosparam file="$(find manos_gazebo)/config/joint_state_controller.yaml" command="load"/>
+  
+  <rosparam file="$(find manos_gazebo)/config/manos_jog_arm_controller.yaml" command="load"/>
   <node name="joint_state_controller_spawner" pkg="controller_manager"
     type="controller_manager" args="spawn joint_state_controller" respawn="false" output="screen"/>
 
-  <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
-  <node name="arm_controller_spawner" pkg="controller_manager"
-      type="controller_manager" args="spawn manos_cartesian_velocity_controller"
-      respawn="false" output="screen"/>
+  <!-- Billard controller -->
+  <group unless="$(arg jog_arm)">
+    <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
+    <node name="arm_controller_spawner" pkg="controller_manager"
+        type="controller_manager" args="spawn manos_cartesian_velocity_controller"
+        respawn="false" output="screen">
+    </node>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/>
+
+  </group>
+
+  <!-- Jog arm controller -->
+  <group if="$(arg jog_arm)">
+    <rosparam file="$(find manos_gazebo)/config/manos_jog_arm_controller.yaml" command="load"/>
+    <node name="ros_control_controller_spawner" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load arm_controller">
+    </node>
+
+    <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="spawn joint_group_position_controller">
+    </node>
+  </group>
+
+  <!-- Default controller -->
+  <!-- <rosparam file="$(find manos_gazebo)/config/manos_controller.yaml" command="load"/>
+  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
+
+  <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load joint_group_position_controller" /> -->
 
 </launch>

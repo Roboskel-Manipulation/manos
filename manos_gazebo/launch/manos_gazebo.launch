@@ -5,17 +5,15 @@
   <arg name="gui" default="false"/>
   <arg name="limited" default="false"/>
   <arg name="rviz_conf" default="$(find manos_gazebo)/config/rviz/manos.rviz"/>
-  <arg name="cart_control" default="false"/>
-
+  
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="worlds/empty.world"/>
     <arg name="paused" value="$(arg paused)"/>
     <arg name="gui" value="$(arg gui)"/>    
   </include>
 
-  <include file="$(find manos_description)/launch/ur3_pg70_upload.launch">
+  <include file="$(find manos_description)/launch/ur3_gazebo.launch">
     <arg name="limited" value="$(arg limited)"/>
-    <arg name="cart_control" value="$(arg cart_control)"/>
   </include>
 
 
@@ -29,23 +27,16 @@
   <!-- Fake Calibration -->
   <node pkg="rostopic" type="rostopic" name="fake_joint_calibration"
         args="pub /calibrated std_msgs/Bool true" />
-  
 
-  <!-- Load Joint Controller -->
-  <group unless="$(arg cart_control)">
-    <rosparam file="$(find manos_gazebo)/config/manos_controller.yaml" command="load"/>
-    <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
-  </group>
   <!-- joint_state_controller -->
-  <rosparam file="$(find manos_gazebo)/config/joint_state_controller.yaml" command="load"/>
+  <rosparam file="$(find manos_gazebo)/config/manos_controllers.yaml" command="load"/>
   <node name="joint_state_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn joint_state_controller" respawn="false" output="screen"/>
-  
-  <!-- Load Cartesian Controller -->
-  <group if="$(arg cart_control)">
-    <rosparam file="$(find manos_gazebo)/config/manos_cartesian_controller.yaml" command="load"/>
-    <node name="arm_cartesian_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn manos_cartesian_velocity_controller_sim" respawn="false" output="screen"/>
 
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/>
-  </group>
+  <!-- Load Cartesian Controller -->
+
+  <node name="arm_cartesian_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn manos_cartesian_velocity_controller_sim" respawn="false" output="screen"/>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)"/>
+
 
 </launch>
