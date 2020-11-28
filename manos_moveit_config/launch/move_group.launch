@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="limited" default="false"/>
 
-  <include file="$(find manos_moveit_config)/launch/planning_context.launch" />
+  <include file="$(find manos_moveit_config)/launch/planning_context.launch" >
+    <arg name="limited" value="$(arg limited)" />
+  </include>
 
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />
@@ -62,7 +65,6 @@
               move_group/MoveGroupGetPlanningSceneService
               move_group/ClearOctomapService
               " />
-
 
     <!-- Publish the planning scene of the physical robot so that rviz plugin can know actual robot -->
     <param name="planning_scene_monitor/publish_planning_scene" value="$(arg publish_monitored_planning_scene)" />

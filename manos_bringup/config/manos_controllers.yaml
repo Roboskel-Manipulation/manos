@@ -12,6 +12,7 @@ ur_hardware_interface:
      - wrist_2_joint
      - wrist_3_joint
 
+### Cartesian Controller based on https://github.com/epfl-lasa/ridgeback_ur5_controller/tree/devel/ur5_cartesian_velocity_control-----###
 
 # Controller for position control of the end effector
 manos_cartesian_state_controller:
@@ -32,7 +33,11 @@ manos_cartesian_velocity_controller_sim:
   publish_rate: 125
   root_name: base_link
   tip_name: ee_link
+####----------------------------------------------------####
 
+
+
+####---------------------------v2020 Controllers-------------------------####
 # Publish all joint states ----------------------------------
 joint_state_controller:
    type:         joint_state_controller/JointStateController
@@ -159,3 +164,4 @@ robot_status_controller:
    type: industrial_robot_status_controller/IndustrialRobotStatusController
    handle_name: industrial_robot_status_handle
    publish_rate: 10
+####----------------------------------------------------####

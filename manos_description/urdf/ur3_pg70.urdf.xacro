@@ -4,11 +4,22 @@
 <!-- schunk_pg70 -->
   <xacro:include filename="$(find manos_description)/urdf/grippers/schunk_pg70.urdf.xacro"/>
 <!-- ur3 -->
-  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" />
-  
-  <xacro:ur3_robot prefix="" joint_limited="false"/>
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
 
-   <link name="world" />
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
+
+  <!-- ur3 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" />
+
+  <!-- arm -->
+  <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur3_default.yaml"/>
+  <xacro:ur3_robot prefix="" joint_limited="false"
+    transmission_hw_interface="$(arg transmission_hw_interface)"
+    kinematics_file="${load_yaml('$(arg kinematics_config)')}"
+  />
+
+  <link name="world" />
 
   <link name="box_link">
     <visual>
@@ -40,7 +51,7 @@
     <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
  </joint>
 
-<!--   <link name="gripper_link">
+  <link name="gripper_link">
     <visual>
       <geometry>
         <box size="0.005 0.113 0.08 "/>
@@ -66,12 +77,12 @@
     <child link="gripper_link"/>
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
  </joint>
- -->
+
   <!-- GRIPPER -->
-<!--   <xacro:schunk_pg70 name="pg70" parent="gripper_link">
+  <xacro:schunk_pg70 name="pg70" parent="gripper_link">
     <origin xyz="0.0095 0 0" rpy="${pi} -${pi/2} 0" />
   </xacro:schunk_pg70>
- -->
+
   <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
         <robotNamespace></robotNamespace>

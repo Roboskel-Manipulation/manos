@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro"
        name="ur3" >
 
-  <xacro:arg name="transmission_hw_interface" default="hardware_interface/VelocityJointInterface"/>
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
 
   <!-- common stuff -->
   <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
@@ -17,7 +17,7 @@
     kinematics_file="${load_yaml('$(arg kinematics_config)')}"
   />
 
-   <link name="world" />
+  <link name="world" />
 
   <link name="box_link">
     <visual>
@@ -48,6 +48,5 @@
     <child link="base_link"/>
     <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
  </joint>
-
 
 </robot>

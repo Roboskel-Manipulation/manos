@@ -2,19 +2,28 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro"
        name="ur3" >
 
-  <xacro:arg name="transmission_hw_interface" default="hardware_interface/VelocityJointInterface"/>
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
 
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
 
   <!-- ur3 -->
-  <xacro:include filename="$(find manos_description)/urdf/ur3_control.urdf.xacro" params="$(prefix) hardware_interface/VelocityJointInterface"/>
+  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" />
 
   <!-- arm -->
   <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur3_default.yaml"/>
-  <xacro:ur3_robot prefix="" joint_limited="false"
+  <xacro:ur3_robot prefix="" joint_limited="true"
+    shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
+    shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}"
+    elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}"
+    wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}"
+    wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}"
+    wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}"
     transmission_hw_interface="$(arg transmission_hw_interface)"
+    kinematics_file="${load_yaml('$(arg kinematics_config)')}"
   />
 
-   <link name="world" />
+  <link name="world" />
 
   <link name="box_link">
     <visual>
@@ -46,11 +55,4 @@
     <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
  </joint>
 
-  <gazebo>
-      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotNamespace>/</robotNamespace>
-        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-        <legacyModeNS>true</legacyModeNS>
-      </plugin>
-  </gazebo>
 </robot>
