@@ -16,7 +16,7 @@
 
   <arg name="controller_config_file" default="$(find manos_bringup)/config/manos_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
   
-  <arg name="robot_description_file" default="$(find manos_description)/launch/ur3_pg70_upload.launch" doc="Robot description launch file."/>
+  <arg name="robot_description_file" default="$(find manos_description)/launch/ur3_table_v2020.launch" doc="Robot description launch file."/>
   
   <arg name="kinematics_config" default="$(find ur_description)/config/ur3_default.yaml" doc="Kinematics config file used for calibration correction. This will be used to verify the robot's calibration is matching the robot_description."/>
   
