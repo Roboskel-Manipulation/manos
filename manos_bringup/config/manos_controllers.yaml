@@ -15,20 +15,20 @@ ur_hardware_interface:
 ### Cartesian Controller based on https://github.com/epfl-lasa/ridgeback_ur5_controller/tree/devel/ur5_cartesian_velocity_control-----###
 
 # Controller for position control of the end effector
-manos_cartesian_state_controller:
+ur3_cartesian_state_controller:
   type: cartesian_controller/CartesianStateController
   publish_rate: 125
   root_name: base_link
   tip_name: ee_link
 
 # Controller for velocity control of the end effector
-manos_cartesian_velocity_controller:
+ur3_cartesian_velocity_controller:
   type: cartesian_controller/CartesianVelocityController
   publish_rate: 125
   root_name: base_link
   tip_name: ee_link
 
-manos_cartesian_velocity_controller_sim:
+ur3_cartesian_velocity_controller_sim:
   type: cartesian_controller/CartesianVelocityControllerSim
   publish_rate: 125
   root_name: base_link
