@@ -10,7 +10,7 @@
   
   <arg name="tf_prefix" default="" doc="tf_prefix used for the robot."/>
   
-  <arg name="controllers" default="joint_state_controller manos_cartesian_velocity_controller" doc="Controllers that are activated by default."/>
+  <arg name="controllers" default="joint_state_controller ur3_cartesian_velocity_controller" doc="Controllers that are activated by default."/>
 
   <arg name="stopped_controllers" default="pos_joint_traj_controller joint_group_vel_controller scaled_pos_joint_traj_controller speed_scaling_state_controller force_torque_sensor_controller robot_status_controller" doc="Controllers that are initally loaded, but not started."/>
 
