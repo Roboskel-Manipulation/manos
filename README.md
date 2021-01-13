@@ -1,39 +1,12 @@
+## Description
 The ultimate repo to start playing with Manos, roboskel's UR3!
-
 <img src="https://raw.githubusercontent.com/Roboskel-Manipulation/manos/master/manos.png" width="200">
 
-# Simulate Manos
+* manos_bringup: Launch real robot
+* manos_gazebo: Launch simulated robot in Gazebo
+* manos_description: URDFs for Manos
+* manos_moveit_config: MoveIt! plugins for Manos
+* manos_cartesian_control: Cartesian velocity controller interface
 
-`roslaunch manos_gazebo manos_gazebo.launch`
-
-
-# Play with the real Manos
-
-`roslaunch manos_bringup manos_bringup.launch robot_ip:=<ROBOT_IP>`
-
-
-# Start MoveIt! planners
-
-`roslaunch manos_moveit_config manos_planning_execution.launch`
-
-or if simulating
-
-`roslaunch manos_moveit_config manos_planning_execution.launch sim:=true`
-
-
-## Note
-
-If you find that the MoveIt planners fail too often, you can use the limited version of the UR3. To do that, just add the `limited:=true` remap after <b>each</b> of the commands discussed above.
-
-# Start rviz with MoveIt! plugins
-
-`roslaunch manos_moveit_config moveit_rviz.launch config:=true`
-
-
-# :warning: Important Dependencies
-
-* The `ur_modern_driver` used is the one forked by `beta-robots` to support `ROS Kinetic` and onwards (Tested on ROS `Melodic`) (https://github.com/beta-robots/ur_modern_driver).
-
-* The `schunk_grippers` used is the one forked by `gstavrinos` to support `ROS Melodic` and provide more accurate Schunk PG70 description (https://github.com/gstavrinos/schunk_grippers)
-
-
+## Dependencies
+To run Manos you need to install the (ur_robot_driver)[https://github.com/UniversalRobots/Universal_Robots_ROS_Driver].
