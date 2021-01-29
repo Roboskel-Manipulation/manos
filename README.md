@@ -21,7 +21,7 @@ To run Manos you need to install the [ur_robot_driver](https://github.com/Univer
 
 `roslaunch manos_bringup manos_bringup<version>.launch robot_ip:=<robot_ip>` 
 
-<b> Note </b>: If using `ur_robot_driver` use `_v2020` as version and add `kinematics_config:=<path_to_catkin_ws>/src/manos/manos_bringup/config/manos_calibration.yaml` as an argument.
+<b> Note </b>: With `ur_robot_driver` use `_v2020` as <version> and add `kinematics_config:=<path_to_catkin_ws>/src/manos/manos_bringup/config/manos_calibration.yaml` as an argument.
 
 <b> Note </b>: At launch the `joint_state_controller` and `ur3_cartesian_velocity_controller` are activated. If you want to unload the `ur3_cartesian_velocity_controller` and load other controllers, run `rosservice call /controller_manager/switch_controller "start_controllers: ['controller_to_start']
 stop_controllers: ['controller_to_stop']
