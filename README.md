@@ -14,7 +14,7 @@ The ultimate repo to start playing with Manos, roboskel's UR3!
 # Dependencies
 To run Manos you need to install the [ur_robot_driver](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver).
 
-<b> Note </b>: The  v2020 versions of the files are compatible with the ur_robot_driver. The rest are compatible with [ur_modern_driver](https://github.com/ros-industrial/ur_modern_driver) which is depricated.
+<b> Note </b>: The * v2020 * versions of the files are compatible with the ur_robot_driver. The rest are compatible with [ur_modern_driver](https://github.com/ros-industrial/ur_modern_driver) which is depricated.
 
 # Run
 ## Real robot
