@@ -1,7 +1,7 @@
 # Manos
 The ultimate repo to start playing with Manos, roboskel's UR3!
 
-<img src="https://raw.githubusercontent.com/Roboskel-Manipulation/manos/master/manos.png" width="200">
+<img src="https://raw.githubusercontent.com/Roboskel-Manipulation/manos/master/manos.png" height="300" width="150">
 
 # Description
 
