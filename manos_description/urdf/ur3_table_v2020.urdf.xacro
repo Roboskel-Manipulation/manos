@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
-  name="ur3_pg70">
-<!-- schunk_pg70 -->
-  <xacro:include filename="$(find manos_description)/urdf/grippers/schunk_pg70.urdf.xacro"/>
-<!-- ur3 -->
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+       name="ur3" >
+
   <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
 
   <!-- common stuff -->
@@ -51,45 +49,4 @@
     <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
  </joint>
 
-  <link name="gripper_link">
-    <visual>
-      <geometry>
-        <box size="0.005 0.113 0.08 "/>
-      </geometry>
-      <material name="silver">
-        <color rgba="0.5 0.5 0.5 1" />
-      </material>
-    </visual>
-    <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.001"/>
-        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
-    </inertial>
-    <collision>
-      <geometry>
-        <box size="0.005 0.113 0.08 "/>
-      </geometry>
-    </collision>
-  </link>
-
-  <joint name="gripper_joint" type="fixed">
-    <parent link="ee_link"/>
-    <child link="gripper_link"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
- </joint>
-
-  <!-- GRIPPER -->
-  <xacro:schunk_pg70 name="pg70" parent="gripper_link">
-    <origin xyz="0.0095 0 0" rpy="${pi} -${pi/2} 0" />
-  </xacro:schunk_pg70>
-
-  <gazebo>
-      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotNamespace></robotNamespace>
-        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-        <legacyModeNS>true</legacyModeNS>
-      </plugin>
-  </gazebo>
-
 </robot>
-

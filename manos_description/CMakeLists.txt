@@ -6,7 +6,8 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
     ur_description
     openni_description
-    schunk_pg70)
+    schunk_pg70
+)
 
 catkin_package()
 

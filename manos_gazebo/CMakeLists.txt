@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   joint_trajectory_controller
   manos_description
   robot_state_publisher
-  ur_gazebo
+#  ur_gazebo
   moveit_kinematics
 )
 

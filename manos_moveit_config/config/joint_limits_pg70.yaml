@@ -32,3 +32,14 @@ joint_limits:
     max_velocity: 3.2
     has_acceleration_limits: true
     max_acceleration: 3.2
+
+pg70_finger1_joint:
+    has_velocity_limits: true
+    max_velocity: 2
+    has_acceleration_limits: false
+    max_acceleration: 0
+  pg70_finger2_joint:
+    has_velocity_limits: true
+    max_velocity: 2
+    has_acceleration_limits: false
+    max_acceleration: 0
