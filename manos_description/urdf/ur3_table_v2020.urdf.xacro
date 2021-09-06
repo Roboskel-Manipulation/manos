@@ -1,52 +1,66 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro"
-       name="ur3" >
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur">
 
-  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+   <!-- import main macro -->
+   <xacro:include filename="$(find ur_description)/urdf/inc/ur_macro.xacro"/>
 
-  <!-- common stuff -->
-  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
+   <!-- parameters -->
+   <xacro:arg name="joint_limit_params" default=""/>
+   <xacro:arg name="kinematics_params" default=""/>
+   <xacro:arg name="physical_params" default=""/>
+   <xacro:arg name="visual_params" default=""/>
+   <!-- legal values:
+         - hardware_interface/PositionJointInterface
+         - hardware_interface/VelocityJointInterface
+         - hardware_interface/EffortJointInterface
+   -->
+   <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+   <xacro:arg name="safety_limits" default="false"/>
+   <xacro:arg name="safety_pos_margin" default="0.15"/>
+   <xacro:arg name="safety_k_position" default="20"/>
 
-  <!-- ur3 -->
-  <xacro:include filename="$(find ur_description)/urdf/ur3.urdf.xacro" />
+   <!-- arm -->
+   <xacro:ur_robot
+     prefix=""
+     joint_limits_parameters_file="$(arg joint_limit_params)"
+     kinematics_parameters_file="$(arg kinematics_params)"
+     physical_parameters_file="$(arg physical_params)"
+     visual_parameters_file="$(arg visual_params)"
+     transmission_hw_interface="$(arg transmission_hw_interface)"
+     safety_limits="$(arg safety_limits)"
+     safety_pos_margin="$(arg safety_pos_margin)"
+     safety_k_position="$(arg safety_k_position)"/>
 
-  <!-- arm -->
-  <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur3_default.yaml"/>
-  <xacro:ur3_robot prefix="" joint_limited="false"
-    transmission_hw_interface="$(arg transmission_hw_interface)"
-    kinematics_file="${load_yaml('$(arg kinematics_config)')}"
-  />
+    <link name="world" />
 
-  <link name="world" />
+    <link name="box_link">
+      <visual>
+        <geometry>
+          <box size="1.0 1.0 0.86"/>
+        </geometry>
+      </visual>
+      <inertial>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <mass value="100"/>
+          <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0" />
+      </inertial>
+      <collision>
+        <geometry>
+          <box size="1.0 1.0 0.86"/>
+        </geometry>
+      </collision>
+    </link>
 
-  <link name="box_link">
-    <visual>
-      <geometry>
-        <box size="1.0 1.0 0.86"/>
-      </geometry>
-    </visual>
-    <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="100"/>
-        <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0" />
-    </inertial>
-    <collision>
-      <geometry>
-        <box size="1.0 1.0 0.86"/>
-      </geometry>
-    </collision>
-  </link>
+    <joint name="world_joint" type="fixed">
+      <parent link="world" />
+      <child link = "box_link" />
+      <origin xyz="0.0 0.0 0.43" rpy="0.0 0.0 0.0" />
+    </joint>
 
-  <joint name="world_joint" type="fixed">
-    <parent link="world" />
-    <child link = "box_link" />
-    <origin xyz="0.0 0.0 0.43" rpy="0.0 0.0 0.0" />
-  </joint>
-
-   <joint name="box_joint" type="fixed">
-    <parent link="box_link"/>
-    <child link="base_link"/>
-    <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
- </joint>
+     <joint name="box_joint" type="fixed">
+      <parent link="box_link"/>
+      <child link="base_link"/>
+      <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
+    </joint>
 
 </robot>
