@@ -2,7 +2,8 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur">
 
    <!-- import main macro -->
-   <xacro:include filename="$(find ur_description)/urdf/inc/ur_macro.xacro"/>
+   <!-- <xacro:include filename="$(find ur_description)/urdf/inc/ur_macro.xacro"/> -->
+   <xacro:include filename="$(find ur_gazebo)/urdf/ur_macro.xacro"/>
 
    <!-- parameters -->
    <xacro:arg name="joint_limit_params" default=""/>
@@ -20,7 +21,7 @@
    <xacro:arg name="safety_k_position" default="20"/>
 
    <!-- arm -->
-   <xacro:ur_robot
+   <xacro:ur_robot_gazebo
      prefix=""
      joint_limits_parameters_file="$(arg joint_limit_params)"
      kinematics_parameters_file="$(arg kinematics_params)"
@@ -61,6 +62,14 @@
       <parent link="box_link"/>
       <child link="base_link"/>
       <origin xyz="0.0 0.0 0.43" rpy="0 0 1.57" />
+    </joint>
+
+    <link name="ee_link" />
+
+     <joint name="tool0_ee_link_joint" type="fixed">
+      <parent link="tool0"/>
+      <child link="ee_link"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0.0" />
     </joint>
 
 </robot>

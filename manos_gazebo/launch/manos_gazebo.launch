@@ -1,48 +1,45 @@
 <?xml version="1.0"?>
 <launch>
+  <!--Robot description and related parameter files -->
+  <arg name="robot_description_file" default="$(find manos_description)/launch/ur3_table_v2021.launch" doc="Launch file which populates the 'robot_description' parameter."/>
+  <arg name="joint_limit_params" default="$(find ur_description)/config/ur3/joint_limits.yaml"/>
+  <arg name="kinematics_params" default="$(find ur_description)/config/ur3/default_kinematics.yaml"/>
+  <arg name="physical_params" default="$(find ur_description)/config/ur3/physical_parameters.yaml"/>
+  <arg name="visual_params" default="$(find ur_description)/config/ur3/visual_parameters.yaml"/>
 
-  <arg name="paused" default="false"/>
-  <arg name="gui" default="false"/>
-  <arg name="limited" default="false"/>
-  <arg name="rviz_conf" default="$(find manos_gazebo)/config/rviz/manos.rviz"/>
-  <arg name="rviz_flag" default="false"/>
-  
-  <!-- startup simulated worls -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="worlds/empty.world"/>
-    <arg name="paused" value="$(arg paused)"/>
-    <arg name="gui" value="$(arg gui)"/>    
+  <!-- Controller configuration -->
+  <arg name="controller_config_file" default="$(find manos_gazebo)/config/manos_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
+  <arg name="controllers" default="joint_state_controller ur3_cartesian_velocity_controller_sim" doc="Controllers that are activated by default."/>
+  <arg name="stopped_controllers" default="joint_group_position_controller arm_controller" doc="Controllers that are initally loaded, but not started."/>
+
+  <!-- robot_state_publisher configuration -->
+  <arg name="tf_prefix" default="" doc="tf_prefix used for the robot."/>
+  <arg name="tf_pub_rate" default="125" doc="Rate at which robot_state_publisher should publish transforms."/>
+
+  <!-- Gazebo parameters -->
+  <arg name="paused" default="false" doc="Starts Gazebo in paused mode" />
+  <arg name="gui" default="true" doc="Starts Gazebo gui" />
+
+  <!-- Load urdf on the parameter server -->
+  <include file="$(arg robot_description_file)">
+    <arg name="joint_limit_params" value="$(arg joint_limit_params)"/>
+    <arg name="kinematics_params" value="$(arg kinematics_params)"/>
+    <arg name="physical_params" value="$(arg physical_params)"/>
+    <arg name="visual_params" value="$(arg visual_params)"/>
   </include>
 
-  <!-- load robot URDF -->
-  <include file="$(find manos_description)/launch/ur3_table_v2020.launch">
-    <arg name="limited" value="$(arg limited)"/>
-  </include>
-
-  <!-- spawn gazebo model -->
-  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -z 0.0 " respawn="false" output="screen" />
-  
+  <!-- Robot state publisher -->
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-    <param name="publish_frequency" type="double" value="200.0" />
-    <param name="tf_prefix" type="string" value="" />
+    <param name="publish_frequency" type="double" value="$(arg tf_pub_rate)" />
+    <param name="tf_prefix" value="$(arg tf_prefix)" />
   </node>
-  
-  <!-- Fake Calibration -->
-  <node pkg="rostopic" type="rostopic" name="fake_joint_calibration"
-        args="pub /calibrated std_msgs/Bool true" />
 
-  <rosparam file="$(find manos_gazebo)/config/manos_controllers.yaml" command="load"/>
-  
-  <!-- joint_state_controller -->
-  <node name="joint_state_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn joint_state_controller" respawn="false" output="screen"/>
-
-  <!-- Start Joint Position Controller -->
-  <node name="arm_cartesian_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
-
-  <!-- Load Cartesian Controller -->
-  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="load ur3_cartesian_velocity_controller_sim" respawn="false" output="screen"/>
-
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_conf)" if="$(arg rviz_flag)"/>
-
-
+  <!-- Start the 'driver' (ie: Gazebo in this case) -->
+  <include file="$(find ur_gazebo)/launch/inc/ur_control.launch.xml">
+    <arg name="controller_config_file" value="$(arg controller_config_file)"/>
+    <arg name="controllers" value="$(arg controllers)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
+  </include>
 </launch>
